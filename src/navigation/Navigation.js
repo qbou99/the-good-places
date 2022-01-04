@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View } from 'react-native';
 
-import Search from '../components/Search';
+import Map from '../components/Map';
 import Restaurant from '../components/Restaurant';
 import FavRestaurants from '../components/FavRestaurants';
 
@@ -18,7 +18,7 @@ function searchStackScreens() {
     >
       <SearchNavigation.Screen
         name="ViewSearch"
-        component={Search}
+        component={Map}
         options={{ title: 'Recherche' }}
       />
       <SearchNavigation.Screen
