@@ -1,11 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 
-import Assets from '../definitions/Assets';
-import Colors from '../definitions/Colors';
-
-
-
 const RestaurantListItem = ({ onClick, restaurantData, restaurantData: { user_rating }, isFav = false }) => {
 
   const getThumbnail = () => {
@@ -16,7 +11,6 @@ const RestaurantListItem = ({ onClick, restaurantData, restaurantData: { user_ra
     };
     return (
       <View style={styles.noThumbnailContainer}>
-        <Image source={Assets.icons.missingIMG} />
       </View>
     );
   };
@@ -31,7 +25,7 @@ const RestaurantListItem = ({ onClick, restaurantData, restaurantData: { user_ra
             {restaurantData.name}
           </Text>
           {isFav ?
-            (<Image style={[styles.icon, { marginLeft: 'auto' }]} source={Assets.icons.favFull} />) :
+            (null) :
             (null)
           }
         </View>
@@ -41,13 +35,11 @@ const RestaurantListItem = ({ onClick, restaurantData, restaurantData: { user_ra
         </Text>
         <View style={styles.statsContainer}>
           <View style={styles.statContainer}>
-            <Image style={styles.icon} source={Assets.icons.rate} />
             <Text style={[styles.data, styles.stat]}>
               {user_rating?.aggregate_rating}
             </Text>
           </View>
           <View style={styles.statContainer}>
-            <Image style={styles.icon} source={Assets.icons.review} />
             <Text style={[styles.data, styles.stat]}>
               {user_rating?.votes}
             </Text>
@@ -91,7 +83,6 @@ const styles = StyleSheet.create({
     width: 128,
     height: 128,
     borderRadius: 12,
-    backgroundColor: Colors.mainGreen,
   },
   title: {
     fontSize: 20,
@@ -102,9 +93,6 @@ const styles = StyleSheet.create({
   },
   cuisine: {
     fontStyle: 'italic',
-  },
-  icon: {
-    tintColor: Colors.mainGreen,
   },
   stat: {
     marginLeft: 4,

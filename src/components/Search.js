@@ -5,10 +5,6 @@ import { connect } from 'react-redux';
 import RestaurantlistItem from '../components/RestaurantListItem';
 import DisplayError from '../components/DisplayError';
 
-import Colors from '../definitions/Colors';
-
-import { getRestaurants } from '../api/zomato';
-
 const Search = ({ navigation, favRestaurants }) => {
 
   const [restaurants, setRestaurants] = useState([]);
@@ -22,14 +18,7 @@ const Search = ({ navigation, favRestaurants }) => {
     setIsRefreshing(true);
     setIsError(false);
     try {
-      const zomatoSearchResult = await getRestaurants(searchTerm, offset);
-      setRestaurants([...prevRestaurants, ...zomatoSearchResult.restaurants]);
-      if (zomatoSearchResult.results_start + zomatoSearchResult.results_shown < zomatoSearchResult.results_found) {
-        setIsMoreResults(true);
-        setNextOffset(zomatoSearchResult.results_start + zomatoSearchResult.results_shown);
-      } else {
-        setIsMoreResults(false);
-      }
+      setIsMoreResults(false);
     } catch (error) {
       setIsError(true);
       setRestaurants([]);
@@ -72,7 +61,6 @@ const Search = ({ navigation, favRestaurants }) => {
         />
         <Button
           title='Rechercher'
-          color={Colors.mainGreen}
           onPress={searchRestaurants}
         />
       </View>

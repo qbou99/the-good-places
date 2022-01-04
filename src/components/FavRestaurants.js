@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import RestaurantlistItem from '../components/RestaurantListItem';
 import DisplayError from '../components/DisplayError';
 
-import { getRestaurantDetails } from '../api/zomato';
-
 const FavRestaurants = ({ navigation, favRestaurants }) => {
 
   const [restaurants, setRestaurants] = useState([]);
@@ -22,10 +20,7 @@ const FavRestaurants = ({ navigation, favRestaurants }) => {
     setIsError(false);
     let restaurants = [];
     try {
-      for (const id of favRestaurants) {
-        const zomatoSearchResult = await getRestaurantDetails(id)
-        restaurants.push(zomatoSearchResult);
-      };
+
       setRestaurants(restaurants);
     } catch (error) {
       setIsError(true);

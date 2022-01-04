@@ -5,11 +5,6 @@ import Toast from 'react-native-root-toast';
 
 import DisplayError from '../components/DisplayError';
 
-import { getRestaurantDetails } from '../api/zomato';
-
-import Colors from '../definitions/Colors';
-import Assets from '../definitions/Assets';
-
 const Restaurant = ({ route, favRestaurants, dispatch }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [restaurant, setRestaurant] = useState(null);
@@ -22,8 +17,7 @@ const Restaurant = ({ route, favRestaurants, dispatch }) => {
   // Pourrait être directement déclarée dans useEffect
   const requestRestaurant = async () => {
     try {
-      const zomatoRestaurantResult = await getRestaurantDetails(route.params.restaurantID);
-      setRestaurant(zomatoRestaurantResult);
+
       setIsLoading(false);
     } catch (error) {
       setIsError(true);
@@ -56,7 +50,6 @@ const Restaurant = ({ route, favRestaurants, dispatch }) => {
     };
     return (
       <View style={styles.containerNoRestaurantImage}>
-        <Image source={Assets.icons.missingIMG} />
       </View>
     );
   };
@@ -80,7 +73,6 @@ const Restaurant = ({ route, favRestaurants, dispatch }) => {
       return (
         <Button
           title='Retirer des favoris'
-          color={Colors.mainGreen}
           onPress={unsaveRestaurant}
         />
       );
@@ -89,7 +81,6 @@ const Restaurant = ({ route, favRestaurants, dispatch }) => {
     return (
       <Button
         title='Ajouter aux favoris'
-        color={Colors.mainGreen}
         onPress={saveRestaurant}
       />
     );
@@ -207,7 +198,6 @@ const styles = StyleSheet.create({
   },
   restaurantImage: {
     height: 180,
-    backgroundColor: Colors.mainGreen,
     borderTopLeftRadius: 3,
     borderTopRightRadius: 3,
   },
@@ -246,7 +236,6 @@ const styles = StyleSheet.create({
   },
   textTitle: {
     fontWeight: 'bold',
-    color: Colors.mainGreen,
     fontSize: 16,
     marginTop: 16,
   },

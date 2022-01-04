@@ -1,14 +1,11 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Image } from 'react-native';
+import { View } from 'react-native';
 
 import Search from '../components/Search';
 import Restaurant from '../components/Restaurant';
 import FavRestaurants from '../components/FavRestaurants';
-
-import Colors from '../definitions/Colors';
-import Assets from '../definitions/Assets';
 
 const SearchNavigation = createStackNavigator();
 const FavNavigation = createStackNavigator();
@@ -56,7 +53,6 @@ function RootStack() {
   return (
     <TabNavigation.Navigator
       screenOptions={{
-        tabBarActiveTintColor: Colors.mainGreen,
         headerShown: false
       }}>
       <TabNavigation.Screen
@@ -64,7 +60,7 @@ function RootStack() {
         component={searchStackScreens}
         options={() => ({
           tabBarIcon: ({ color }) => {
-            return <Image source={Assets.icons.search} style={{ tintColor: color }} />;
+            return <View style={{ tintColor: color }} />;
           }
         })}
       />
@@ -73,7 +69,7 @@ function RootStack() {
         component={favStackScreens}
         options={() => ({
           tabBarIcon: ({ color }) => {
-            return <Image source={Assets.icons.favFull} style={{ tintColor: color }} />;
+            return <View style={{ tintColor: color }} />;
           }
         })}
       />
