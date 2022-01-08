@@ -72,7 +72,43 @@ const Map = ({ navigation, favRestaurants }) => {
           longitude: location.coords.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        }} style={{width: Dimensions.get('window').width - 30, height: Dimensions.get('window').height - 150}} />)}
+        }} style={{width: Dimensions.get('window').width - 30, height: Dimensions.get('window').height - 150}}
+        customMapStyle={[
+          {
+            featureType: "administrative",
+            elementType: "geometry",
+            stylers: [
+            {
+                visibility: "off"
+            }
+            ]
+          },
+          {
+            featureType: "poi",
+            stylers: [
+              {
+                visibility: "off"
+              }
+            ]
+          },
+          {
+            featureType: "road",
+            elementType: "labels.icon",
+            stylers: [
+              {
+                visibility: "off"
+              }
+            ]
+          },
+          {
+            featureType: "transit",
+            stylers: [
+              {
+                visibility: "off"
+              }
+            ]
+          }
+        ]}/>)}
       </View>
       {
         isError ?
