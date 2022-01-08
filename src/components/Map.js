@@ -4,50 +4,18 @@ import { connect } from 'react-redux';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 
-import RestaurantlistItem from './RestaurantListItem';
 import DisplayError from './DisplayError';
 
-const Map = ({ navigation, favRestaurants }) => {
+const Map = ({ navigation }) => {
 
-  const [restaurants, setRestaurants] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isError, setIsError] = useState(false);
   const [location, setLocation] = useState(null);
 
-  const requestRestaurants = async (prevRestaurants, offset) => {
-    setIsRefreshing(true);
-    setIsError(false);
-    try {
-      setIsMoreResults(false);
-    } catch (error) {
-      setIsError(true);
-      setRestaurants([]);
-      setIsMoreResults(true);
-      setNextOffset(0);
-    }
-    setIsRefreshing(false);
-  };
-
-  const searchRestaurants = () => {
-    Keyboard.dismiss();
-    requestRestaurants([], 0);
-  };
-
-  const loadMoreRestaurants = () => {
-    if (isMoreResults) {
-      requestRestaurants(restaurants, nextOffset);
-    };
-  };
+ 
 
   const navigateToRestaurantDetails = (restaurantID) => {
     navigation.navigate("ViewRestaurant", { restaurantID });
-  };
-
-  const amIaFavRestaurant = (restaurantID) => {
-    if (favRestaurants.findIndex(i => i === restaurantID) !== -1) {
-      return true;
-    }
-    return false;
   };
 
   useEffect(() => {
@@ -110,25 +78,7 @@ const Map = ({ navigation, favRestaurants }) => {
           }
         ]}/>)}
       </View>
-      {
-        isError ?
-          (<DisplayError message='Impossible de récupérer les restaurants' />) :
-          (<FlatList
-            data={restaurants}
-            extraData={favRestaurants}
-            keyExtractor={(item) => item.restaurant.id.toString()}
-            renderItem={({ item }) => (
-              <RestaurantlistItem
-                restaurantData={item.restaurant}
-                onClick={navigateToRestaurantDetails}
-                isFav={amIaFavRestaurant(item.restaurant.id)} />
-            )}
-            onEndReached={loadMoreRestaurants}
-            onEndReachedThreshold={0.5}
-            refreshing={isRefreshing}
-            onRefresh={searchRestaurants}
-          />)
-      }
+      
     </View>
   );
 };
