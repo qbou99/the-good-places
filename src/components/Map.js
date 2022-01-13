@@ -33,14 +33,13 @@ const Map = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
+      <>
         {(location === null ? null : <MapView showsPointsOfInterest={false} region={{
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        }} style={{width: Dimensions.get('window').width - 30, height: Dimensions.get('window').height - 150}}
+        }} style={{width: Dimensions.get('window').width, height: Dimensions.get('window').height - 450}}
         customMapStyle={[
           {
             featureType: "administrative",
@@ -77,9 +76,7 @@ const Map = ({ navigation }) => {
             ]
           }
         ]}/>)}
-      </View>
-      
-    </View>
+      </>
   );
 };
 
