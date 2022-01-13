@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native-paper';
+import { View } from 'react-native';
 
 const EditPlace = () => {
     return (

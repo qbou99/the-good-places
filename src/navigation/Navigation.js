@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View } from 'react-native';
+import { BottomNavigation, BottomNavigationTab, Icon } from '@ui-kitten/components';
 
 import Home from '../screens/Home'
 import Search from '../screens/Search';
@@ -55,29 +55,28 @@ function searchStackScreens() {
   )
 };
 
+const BottomTabBar = ({ navigation, state }) => (
+  <BottomNavigation
+    selectedIndex={state.index}
+    onSelect={index => navigation.navigate(state.routeNames[index])}>
+    <BottomNavigationTab title='Map' icon={<Icon name={"map-outline"}/>}/>
+    <BottomNavigationTab title='Chercher' icon={<Icon name={"search-outline"}/>}/>
+  </BottomNavigation>
+);
+
 function RootStack() {
   return (
     <TabNavigation.Navigator
       screenOptions={{
         headerShown: false
-      }}>
+      }} tabBar={BottomTabBar}>
       <TabNavigation.Screen
         name="Map"
         component={mapStackScreens}
-        options={() => ({
-          tabBarIcon: ({ color }) => {
-            return <View style={{ tintColor: color }} />;
-          }
-        })}
       />
       <TabNavigation.Screen
         name="Chercher"
         component={searchStackScreens}
-        options={() => ({
-          tabBarIcon: ({ color }) => {
-            return <View style={{ tintColor: color }} />;
-          }
-        })}
       />
     </TabNavigation.Navigator>
   );
