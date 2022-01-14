@@ -15,6 +15,9 @@ const TabNavigation = createBottomTabNavigator();
 function mapStackScreens() {
   return (
     <MapNavigation.Navigator
+      screenOptions={{
+        headerShown: false
+      }}
       initialRouteName="ViewHome"
     >
       <MapNavigation.Screen
@@ -39,6 +42,9 @@ function mapStackScreens() {
 function searchStackScreens() {
   return (
     <SearchNavigation.Navigator
+      screenOptions={{
+        headerShown: false
+      }}
       initialRouteName="ViewSearch"
     >
       <SearchNavigation.Screen
@@ -59,8 +65,8 @@ const BottomTabBar = ({ navigation, state }) => (
   <BottomNavigation
     selectedIndex={state.index}
     onSelect={index => navigation.navigate(state.routeNames[index])}>
-    <BottomNavigationTab title='Map' icon={<Icon name={"map-outline"}/>}/>
-    <BottomNavigationTab title='Chercher' icon={<Icon name={"search-outline"}/>}/>
+    <BottomNavigationTab title='Map' icon={<Icon name={"map-outline"} />} />
+    <BottomNavigationTab title='Chercher' icon={<Icon name={"search-outline"} />} />
   </BottomNavigation>
 );
 

@@ -1,56 +1,56 @@
 import React from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
+import { Icon } from '@ui-kitten/components';
+
+import TagsIcon from './TagsIcon';
 
 const PlaceListItem = ({ onClick }) => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.informationContainer}>
+        <Text style={styles.title}>Bonjour</Text>
+        <Text style={styles.city}>Aurevoir</Text>
+      </View>
+      <View style={styles.iconContainer}>
+        <TagsIcon />
+        <Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' />
+      </View>
+    </View>
+  );
 
-  
 };
 
 export default PlaceListItem;
 
 const styles = StyleSheet.create({
+
   container: {
     flexDirection: 'row',
     paddingVertical: 8,
+    backgroundColor: 'red'
   },
   informationContainer: {
     flex: 1,
     marginLeft: 12,
     justifyContent: 'center',
   },
-  titleContainer: {
-    flexDirection: 'row',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    marginTop: 12,
-  },
-  statContainer: {
-    flexDirection: 'row',
-    marginRight: 8,
-  },
-  noThumbnailContainer: {
-    width: 128,
-    height: 128,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  thumbnail: {
-    width: 128,
-    height: 128,
-    borderRadius: 12,
-  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
   },
-  data: {
-    fontSize: 16,
+  city: {
+    fontSize: 20,
   },
-  cuisine: {
-    fontStyle: 'italic',
+  iconContainer: {
+    flex: 1,
+    marginHorizontal: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  stat: {
+  icon: {
     marginLeft: 4,
+    marginTop: 4,
+    width: 28,
+    height: 28,
   },
 });
