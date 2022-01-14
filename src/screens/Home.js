@@ -1,4 +1,3 @@
-import { ListItem } from '@ui-kitten/components';
 import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 
@@ -8,7 +7,7 @@ import TagsIcon from '../components/TagsIcon';
 
 const Home = () => {
     return (
-        <View><Map /><ListItem><PlaceListItem /></ListItem></View>
+        <View><Map /><PlaceListItem /></View>
     );
 
 };
