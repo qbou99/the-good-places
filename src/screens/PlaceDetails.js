@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator, ScrollView, Image, Button } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import Toast from 'react-native-root-toast';
+import { Text } from '@ui-kitten/components';
 
 import DisplayError from '../components/DisplayError';
+import TagsIcon from '../components/TagsIcon';
 
 const PlaceDetails = ({ route, dispatch }) => {
   return (
-    <View></View>
+    <View>
+      <Text>{"Lorem ipsum"}</Text>
+      <TagsIcon />
+      <Text>Address</Text>
+    </View>
   );
 };
 

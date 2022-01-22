@@ -6,7 +6,7 @@ import TagsIcon from './TagsIcon';
 
 const PlaceListItem = ({ onClick }) => {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container}>
       <View style={styles.informationContainer}>
         <Text style={styles.title}>Bonjour</Text>
         <Text style={styles.city}>Aurevoir</Text>
@@ -15,7 +15,7 @@ const PlaceListItem = ({ onClick }) => {
         <TagsIcon />
         <Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
 };
