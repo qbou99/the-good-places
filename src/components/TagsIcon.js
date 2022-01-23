@@ -2,10 +2,10 @@ import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Icon } from '@ui-kitten/components';
 
-const TagsIcon = () => {
+const TagsIcon = ( { name }) => {
     return (
         <View style={styles.circle} >
-            <Icon name={"camera-outline"} style={styles.icon} fill='#8F9BB3' />
+            <Icon name={name} style={styles.icon} fill='#8F9BB3' />
         </View>
     )
 
@@ -23,8 +23,8 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: "#9999",
         alignContent: "center",
-        backgroundColor: '#FFFF'
-
+        backgroundColor: '#FFFF',
+        marginLeft: -15
     },
     icon: {
         marginLeft: 4,

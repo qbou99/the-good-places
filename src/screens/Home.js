@@ -5,10 +5,11 @@ import Map from "../components/Map"
 import PlaceList from '../components/PlaceList';
 import PlaceListItem from '../components/PlaceListItem';
 import TagsIcon from '../components/TagsIcon';
+import TagsList from '../components/TagsList';
 
 const Home = () => {
     return (
-        <View><Map /><PlaceList /></View>
+        <View><Map /><TagsList tags={["camera-outline","map-outline","search-outline"]}/><PlaceList /></View>
     );
 
 };
