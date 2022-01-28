@@ -7,6 +7,8 @@ import { RootSiblingParent } from 'react-native-root-siblings';
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { MaterialIconsPack } from './src/helpers/material-icons'
+import { MaterialCommunityIconsPack } from './src/helpers/materialcommunity-icons'
 
 import Navigation from './src/navigation/Navigation';
 import { Store, Persistor } from './src/store/config';
@@ -15,7 +17,7 @@ export default function App() {
   return (
     <Provider store={Store}>
       <PersistGate loading={null} persistor={Persistor}>
-        <IconRegistry icons={EvaIconsPack} />
+        <IconRegistry icons={[EvaIconsPack, MaterialIconsPack, MaterialCommunityIconsPack]} />
         <ApplicationProvider {...eva} theme={eva.light}>
           <RootSiblingParent>
             <NavigationContainer>

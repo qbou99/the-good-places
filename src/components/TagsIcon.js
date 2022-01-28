@@ -2,10 +2,10 @@ import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Icon } from '@ui-kitten/components';
 
-const TagsIcon = ( { name }) => {
+const TagsIcon = ( { name, pack }) => {
     return (
         <View style={styles.circle} >
-            <Icon name={name} style={styles.icon} fill='#8F9BB3' />
+            <Icon name={name} style={styles.icon} fill='#8F9BB3' pack={pack} />
         </View>
     )
 

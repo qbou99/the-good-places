@@ -10,7 +10,7 @@ const TagsList = ( { tags }) => {
         <View style={styles.container}>
         {
             tags.map((element, i) => {   
-                return ( <TagsIcon key={element} name={element}/>) 
+                return ( <TagsIcon key={element.name + element.pack} name={element.name} pack={element.pack}/>) 
             })
         }
         </View>

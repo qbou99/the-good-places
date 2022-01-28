@@ -9,7 +9,7 @@ import TagsList from '../components/TagsList';
 
 const Home = () => {
     return (
-        <View><Map /><TagsList tags={["camera-outline","map-outline","search-outline"]}/><PlaceList /></View>
+        <View><Map /><TagsList tags={[{name:"camera",pack:"eva"},{name:"local-pizza", pack:"material"},{name: "glass-cocktail", pack:"materialcommunity"}]}/><PlaceList /></View>
     );
 
 };
