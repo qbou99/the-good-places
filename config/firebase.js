@@ -1,21 +1,27 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { collection, getDocs } from "firebase/firestore";
 import Constants from 'expo-constants';
 
 // Initialize Firebase
 const firebaseConfig = {
-    apiKey: Constants.manifest.extra.apiKey,
-    authDomain: Constants.manifest.extra.authDomain,
-    projectId: Constants.manifest.extra.projectId,
-    storageBucket: Constants.manifest.extra.storageBucket,
-    messagingSenderId: Constants.manifest.extra.messagingSenderId,
-    appId: Constants.manifest.extra.appId
+    apiKey: "AIzaSyCoKB9ZpR59Byo0kJa0nkEymu31tGNP3EA",
+    authDomain: "the-good-places.firebaseapp.com",
+    projectId: "the-good-places",
+    storageBucket: "the-good-places.appspot.com",
+    messagingSenderId: "428572468144",
+    appId: "1:428572468144:web:ffa97e01d58a00707b2c75"
 };
 
-let Firebase;
+const Firebase = initializeApp(firebaseConfig);
 
-if (firebase.apps.length === 0) {
-    Firebase = firebase.initializeApp(firebaseConfig);
+export const auth = getAuth(Firebase);
+export const db = getFirestore(Firebase);
+
+export const getData = async (table) => {
+    const col = collection(db, table);
+    const snapshot = await getDocs(col);
+    const list = snapshot.docs.map(doc => doc.data());
+    return list;
 }
-
-export default Firebase;
