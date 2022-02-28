@@ -5,7 +5,7 @@ import { Icon } from '@ui-kitten/components';
 const TagsIcon = ( { name, pack }) => {
     return (
         <View style={styles.circle} >
-            <Icon name={name} style={styles.icon} fill='#8F9BB3' pack={pack} />
+            <Icon name={name || "map-marker-question-outline"} style={styles.icon} fill='#8F9BB3' pack={pack || "materialcommunity"} />
         </View>
     )
 

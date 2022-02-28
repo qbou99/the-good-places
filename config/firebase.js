@@ -85,13 +85,13 @@ export const addUser = async (username, mailAddress, friends = null, places = nu
     console.log("add user : " + username);
 }
 
-export const setPlace = async (id, address, coordinates, description, name, tag) => {
+export const setPlace = async (id, address, coordinates, description, name, tags) => {
     await setDoc(doc(db, "Places", id), {
         address: address,
         coordinates: coordinates,
         description: description,
         name: name,
-        tag: tag,
+        tag: tags,
     });
     console.log("set place : " + id);
 }
