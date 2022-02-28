@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { List } from '@ui-kitten/components';
-import { getData } from '../../config/firebase'
+import { getData, getPlaces } from '../../config/firebase'
 
 import PlacelistItem from './PlaceListItem';
 
@@ -20,7 +20,7 @@ const PlaceList = ({ onClick }) => {
   }, []);
 
   const searchPlaces = async () => {
-    const test = await getData('Places')
+    const test = await getPlaces()
     console.log(JSON.stringify(test))
   };
 

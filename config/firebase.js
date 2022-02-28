@@ -1,8 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { collection, getDocs } from "firebase/firestore";
-import Constants from 'expo-constants';
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -22,6 +20,60 @@ export const db = getFirestore(Firebase);
 export const getData = async (table) => {
     const col = collection(db, table);
     const snapshot = await getDocs(col);
-    const list = snapshot.docs.map(doc => doc.data());
-    return list;
+    return snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
+}
+
+export const getUsers = async () => {
+    const col = collection(db, "User");
+    const snapshot = await getDocs(col);
+    return snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
+}
+
+export const getPlaces = async () => {
+    const col = collection(db, "Places");
+    const snapshot = await getDocs(col);
+    return snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
+}
+
+export const getUserById = async (id) => {
+    const docRef = doc(db, "User", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+    } else {
+        console.log("No such document!");
+    }
+    return docSnap.data();
+}
+
+export const getPlacesById = async (id) => {
+    const docRef = doc(db, "Places", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+    } else {
+        console.log("No such document!");
+    }
+    return docSnap.data();
+}
+
+export const setPlace = async (address, coordinates, description, name, tag) => {
+    await addDoc(collection(db, "Places"), {
+        address: address,
+        coordinates: coordinates,
+        description: description,
+        name: name,
+        tag: tag,
+    })
+}
+
+export const setUser = async (friends, mailAddress, places, username) => {
+    await addDoc(collection(db, "User"), {
+        friends: friends,
+        mailAddress: mailAddress,
+        places: places,
+        username: username,
+    })
 }
