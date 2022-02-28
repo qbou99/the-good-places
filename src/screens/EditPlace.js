@@ -3,9 +3,10 @@ import { View, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input, Select, SelectItem, Button, Modal, Card, Text, List, ListItem } from '@ui-kitten/components';
 
-import { forward } from '../api/positionstack'
+import { forward, reverse } from '../api/positionstack'
+import { setPlace } from '../../config/firebase'
 
-const EditPlace = () => {
+const EditPlace = ( {navigation} ) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [address, setAddress] = useState('');
@@ -47,9 +48,16 @@ const EditPlace = () => {
             <Button onPress={ async () => {  
                 const res = await forward(address)
                 setData(res)
-                if(address === res[0].label)
-                    console.log("Envoyed")
-                else
+                if(address === res[0].label) {
+                    let place = res[0];
+                    if(place.type === "venue")
+                    {
+                        const reverseData = await reverse(place.latitude, place.longitude);
+                        place = reverseData.data.find(p => p.type === "address");
+                    }
+                    await setPlace(place.label, {latitude: place.latitude, longitude: place.longitude}, description, name, [{name:"local-pizza", pack:"material"}])
+                    navigation.goBack()
+                } else
                     setVisible(true);
                 }}>
                 Send

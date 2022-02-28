@@ -2,17 +2,17 @@ import React from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 import { Icon } from '@ui-kitten/components';
 
-import TagsIcon from './TagsIcon';
+import TagsList from './TagsList';
 
-const PlaceListItem = ({ onClick }) => {
+const PlaceListItem = ({ placeData, onClick }) => {
   return (
     <TouchableOpacity style={styles.container}>
       <View style={styles.informationContainer}>
-        <Text style={styles.title}>Bonjour</Text>
-        <Text style={styles.city}>Aurevoir</Text>
+        <Text style={styles.title}>{placeData.name}</Text>
+        <Text style={styles.city}>{placeData.description}</Text>
       </View>
       <View style={styles.iconContainer}>
-        <TagsIcon />
+        <TagsList tags={placeData.tags} />
         <Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' />
       </View>
     </TouchableOpacity>
@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: 'red'
   },
   informationContainer: {
     flex: 1,

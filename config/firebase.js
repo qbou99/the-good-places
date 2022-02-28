@@ -59,13 +59,13 @@ export const getPlacesById = async (id) => {
     return docSnap.data();
 }
 
-export const setPlace = async (address, coordinates, description, name, tag) => {
+export const setPlace = async (address, coordinates, description, name, tags) => {
     await addDoc(collection(db, "Places"), {
         address: address,
         coordinates: coordinates,
         description: description,
         name: name,
-        tag: tag,
+        tags: tags,
     })
 }
 

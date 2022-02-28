@@ -9,7 +9,7 @@ const TagsList = ( { tags }) => {
     return (
         <View style={styles.container}>
         {
-            tags.map((element, i) => {   
+            tags?.map((element, i) => {   
                 return ( <TagsIcon key={element.name + element.pack} name={element.name} pack={element.pack}/>) 
             })
         }
