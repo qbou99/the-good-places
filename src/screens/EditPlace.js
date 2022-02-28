@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
-import { Input, Select, SelectItem, Button } from '@ui-kitten/components';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Input, Select, SelectItem, Button, Modal, Card, Text, List, ListItem } from '@ui-kitten/components';
+
+import { forward } from '../api/positionstack'
 
 const EditPlace = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [address, setAddress] = useState('');
+    const [selectedIndex, setSelectedIndex] = useState('');
+    const [visible, setVisible] = useState(false);
+    const [data, setData] = useState([]);
+
+    const renderItem = ({ item, index }) => (
+        <ListItem title={`${item.label}`} onPressOut={()=>{setAddress(item.label); setVisible(false);}} style={{flex: 1}} />
+      );
 
     return (
-        <View>
+        <SafeAreaView style={{flex: 1}}>
             <Input 
                 placeholder='Name'
                 value={name}
@@ -34,11 +44,42 @@ const EditPlace = () => {
                 multiline={true}
                 onChangeText={nextValue => setAddress(nextValue)}
                 />
-            <Button onPress={() => {}}>
+            <Button onPress={ async () => {  
+                const res = await forward(address)
+                setData(res)
+                if(address === res[0].label)
+                    console.log("Envoyed")
+                else
+                    setVisible(true);
+                }}>
                 Send
             </Button>
-        </View>
+
+            <Modal
+            style={{maxheight: Dimensions.get('window').height - 100, width: Dimensions.get('window').width - 50}}
+                visible={visible}
+                backdropStyle={styles.backdrop}
+                onBackdropPress={() => setVisible(false)}>
+                <Card disabled={true}>
+                    
+                    <Text category={'h2'} style={{paddingBottom: 10}} >Select address</Text>
+                    <List
+                        data={data}
+                        renderItem={renderItem}
+                        />
+                    <Button onPress={() => console.log(data)}>
+                        DISMISS
+                    </Button>
+                </Card>
+            </Modal>
+        </SafeAreaView>
     );
 };
 
 export default EditPlace;
+
+const styles = StyleSheet.create({
+    backdrop: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+  });
