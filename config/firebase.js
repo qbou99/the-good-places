@@ -1,5 +1,4 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc } from "firebase/firestore";
 
 // Initialize Firebase
@@ -14,7 +13,7 @@ const firebaseConfig = {
 
 const Firebase = initializeApp(firebaseConfig);
 
-export const auth = getAuth(Firebase);
+export default Firebase;
 export const db = getFirestore(Firebase);
 
 export const getData = async (table) => {
@@ -76,7 +75,7 @@ export const addPlace = async (address, coordinates, description, name, tag) => 
     console.log("add place : " + name);
 }
 
-export const addUser = async (friends, mailAddress, places, username) => {
+export const addUser = async (username, mailAddress, friends = null, places = null) => {
     await addDoc(collection(db, "User"), {
         friends: friends,
         mailAddress: mailAddress,
@@ -97,7 +96,7 @@ export const setPlace = async (id, address, coordinates, description, name, tag)
     console.log("set place : " + id);
 }
 
-export const setUser = async (id, friends, mailAddress, places, username) => {
+export const setUser = async (id, username, mailAddress, friends = null, places = null) => {
     await setDoc(doc(db, "User", id), {
         friends: friends,
         mailAddress: mailAddress,

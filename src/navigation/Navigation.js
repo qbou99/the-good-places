@@ -7,10 +7,13 @@ import Home from '../screens/Home'
 import Search from '../screens/Search';
 import PlaceDetails from '../screens/PlaceDetails';
 import EditPlace from '../screens/EditPlace';
+import Authentication from '../screens/Authentication';
 
 const MapNavigation = createStackNavigator();
 const SearchNavigation = createStackNavigator();
 const TabNavigation = createBottomTabNavigator();
+
+const MainNavigation = createStackNavigator();
 
 function mapStackScreens() {
   return (
@@ -18,8 +21,12 @@ function mapStackScreens() {
       screenOptions={{
         headerShown: false
       }}
-      initialRouteName="ViewHome"
+      initialRouteName="Authentification"
     >
+      <MapNavigation.Screen
+        name="Authentification"
+        component={Authentication}
+      />
       <MapNavigation.Screen
         name="ViewHome"
         component={Home}
@@ -70,7 +77,7 @@ const BottomTabBar = ({ navigation, state }) => (
   </BottomNavigation>
 );
 
-function RootStack() {
+function InAppNavigation() {
   return (
     <TabNavigation.Navigator
       screenOptions={{
@@ -85,6 +92,23 @@ function RootStack() {
         component={searchStackScreens}
       />
     </TabNavigation.Navigator>
+  );
+}
+
+function RootStack() {
+  return (
+    <MainNavigation.Navigator screenOptions={{
+      headerShown: false
+    }}
+      initialRouteName="Authentification"
+    >
+      <MainNavigation.Screen
+        name="ViewAuthentication"
+        component={Authentication}
+        options={{ title: 'Authentification' }}
+      />
+    </MainNavigation.Navigator>,
+    InAppNavigation() 
   );
 }
 

@@ -1,10 +1,147 @@
-import React, { useState, useEffect } from 'react';
-import { View } from 'react-native-paper';
+import React, { useEffect, useState } from 'react'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 
-const Authentication = () => {
+import {setUser} from '../../config/firebase'
+
+const auth = getAuth();
+
+const Authentication = ({ navigation }) => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [login, setLogin] = useState(true)
+
+    const [username, setUsername] = useState('')
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, user => {
+            if (user) {
+                navigation.navigate("ViewHome");
+            }
+        })
+        return unsubscribe
+    }, [])
+
+    const handleSignUp = () => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(userCredentials => {
+                const user = userCredentials.user;
+                console.log('Inscription de ', user.uid);
+                setUser(user.uid, username, email);
+            })
+            .catch(error => alert(error.message))
+    }
+
+    const handleLogin = () => {
+        signInWithEmailAndPassword(auth, email, password)
+            .then(userCredentials => {
+                const user = userCredentials.user;
+                console.log('Connexion de ', user.uid);
+            })
+            .catch(error => alert(error.message))
+    }
+
+    const toogleLogin = () => {
+        setLogin(!login);
+    }
+
     return (
-        <View></View>
-    );
-};
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior="padding"
+        >
+            <View style={styles.inputContainer}>
+                {login ? null : <TextInput
+                    placeholder="Username"
+                    value={username}
+                    onChangeText={text => setUsername(text)}
+                    style={styles.input}
+                />}
+                <TextInput
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                    style={styles.input}
+                />
+                <TextInput
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={text => setPassword(text)}
+                    style={styles.input}
+                    secureTextEntry
+                />
+            </View>
 
-export default Authentication;
+            <View style={styles.buttonContainer}>
+                {login ? <TouchableOpacity
+                    onPress={handleLogin}
+                    style={styles.button}
+                >
+                    <Text style={styles.buttonText}>Connexion</Text>
+                </TouchableOpacity> :
+                    <TouchableOpacity
+                        onPress={handleSignUp}
+                        style={[styles.button]}
+                    >
+                        <Text style={styles.buttonText}>Inscription</Text>
+                    </TouchableOpacity>
+                }
+                <TouchableOpacity
+                    onPress={toogleLogin}
+                    style={[styles.button, styles.buttonOutline]}
+                >
+                    <Text style={styles.buttonOutlineText}>{login ? "S'inscrire" : "Se connecter"}</Text>
+                </TouchableOpacity>
+            </View>
+        </KeyboardAvoidingView>
+    )
+}
+
+export default Authentication
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    inputContainer: {
+        width: '80%'
+    },
+    input: {
+        backgroundColor: 'white',
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        borderRadius: 10,
+        marginTop: 5,
+    },
+    buttonContainer: {
+        width: '60%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 40,
+    },
+    button: {
+        backgroundColor: 'blue',
+        width: '100%',
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    buttonOutline: {
+        backgroundColor: 'white',
+        marginTop: 5,
+        borderColor: '#0782F9',
+        borderWidth: 2,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+    buttonOutlineText: {
+        color: 'blue',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+})
