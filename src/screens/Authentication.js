@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { useFonts } from 'expo-font';
+import AppLoading from 'expo-app-loading';
 
 import {setUser} from '../../config/firebase'
 
 const auth = getAuth();
 
 const Authentication = ({ navigation }) => {
+    let [fontsLoaded] = useFonts({
+        'Futura': require('../../assets/futura.ttf'),
+      });
+    
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [login, setLogin] = useState(true)
@@ -45,11 +51,16 @@ const Authentication = ({ navigation }) => {
         setLogin(!login);
     }
 
+    if (!fontsLoaded) {
+        return <AppLoading />;
+    }
+
     return (
         <KeyboardAvoidingView
             style={styles.container}
             behavior="padding"
         >
+            <Text style={{ fontFamily: 'Futura', fontSize: 72, textAlign: "center", color: "#6db966", paddingBottom: 24 }}>The{"\n"}Good{"\n"}Places</Text>
             <View style={styles.inputContainer}>
                 {login ? null : <TextInput
                     placeholder="Username"
