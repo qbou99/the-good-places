@@ -21,7 +21,7 @@ export const getData = async (table) => {
     const col = collection(db, table);
     const snapshot = await getDocs(col);
     const list = snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
-    console.log("Data : " + list);
+    console.log("Data : " + JSON.stringify(list));
     return list;
 }
 
@@ -29,7 +29,7 @@ export const getUsers = async () => {
     const col = collection(db, "User");
     const snapshot = await getDocs(col);
     const list = snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
-    console.log("Users : " + list);
+    console.log("Users : " + JSON.stringify(list));
     return list;
 }
 
@@ -37,7 +37,7 @@ export const getPlaces = async () => {
     const col = collection(db, "Places");
     const snapshot = await getDocs(col);
     const list = snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
-    console.log("Places : " + list);
+    console.log("Places : " + JSON.stringify(list));
     return list;
 }
 
