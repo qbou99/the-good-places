@@ -65,17 +65,6 @@ export const getPlacesById = async (id) => {
     return docSnap.data();
 }
 
-export const setPlace = async (address, coordinates, description, name, tags) => {
-    await addDoc(collection(db, "Places"), {
-        address: address,
-        coordinates: coordinates,
-        description: description,
-        name: name,
-        tags: tags,
-    })
-    console.log("add place : " + name);
-}
-
 export const addUser = async (friends, mailAddress, places, username) => {
     await addDoc(collection(db, "User"), {
         friends: friends,
@@ -86,13 +75,13 @@ export const addUser = async (friends, mailAddress, places, username) => {
     console.log("add user : " + username);
 }
 
-export const setPlace = async (id, address, coordinates, description, name, tag) => {
+export const setPlace = async (id, address, coordinates, description, name, tags) => {
     await setDoc(doc(db, "Places", id), {
         address: address,
         coordinates: coordinates,
         description: description,
         name: name,
-        tag: tag,
+        tag: tags,
     });
     console.log("set place : " + id);
 }
