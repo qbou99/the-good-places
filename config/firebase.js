@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, doc, getDoc, addDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -20,19 +20,25 @@ export const db = getFirestore(Firebase);
 export const getData = async (table) => {
     const col = collection(db, table);
     const snapshot = await getDocs(col);
-    return snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
+    const list = snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
+    console.log("Data : " + JSON.stringify(list));
+    return list;
 }
 
 export const getUsers = async () => {
     const col = collection(db, "User");
     const snapshot = await getDocs(col);
-    return snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
+    const list = snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
+    console.log("Users : " + JSON.stringify(list));
+    return list;
 }
 
 export const getPlaces = async () => {
     const col = collection(db, "Places");
     const snapshot = await getDocs(col);
-    return snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
+    const list = snapshot.docs.map(document => { return { id: document.id, ...document.data() } });
+    console.log("Places : " + JSON.stringify(list));
+    return list;
 }
 
 export const getUserById = async (id) => {
@@ -40,9 +46,9 @@ export const getUserById = async (id) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
+        console.log("User data:", docSnap.data());
     } else {
-        console.log("No such document!");
+        console.log("Pas de user id : " + id);
     }
     return docSnap.data();
 }
@@ -52,9 +58,9 @@ export const getPlacesById = async (id) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
+        console.log("Place data:", docSnap.data());
     } else {
-        console.log("No such document!");
+        console.log("Pas de place id : " + id);
     }
     return docSnap.data();
 }
@@ -67,13 +73,36 @@ export const setPlace = async (address, coordinates, description, name, tags) =>
         name: name,
         tags: tags,
     })
+    console.log("add place : " + name);
 }
 
-export const setUser = async (friends, mailAddress, places, username) => {
+export const addUser = async (friends, mailAddress, places, username) => {
     await addDoc(collection(db, "User"), {
         friends: friends,
         mailAddress: mailAddress,
         places: places,
         username: username,
     })
+    console.log("add user : " + username);
+}
+
+export const setPlace = async (id, address, coordinates, description, name, tag) => {
+    await setDoc(doc(db, "Places", id), {
+        address: address,
+        coordinates: coordinates,
+        description: description,
+        name: name,
+        tag: tag,
+    });
+    console.log("set place : " + id);
+}
+
+export const setUser = async (id, friends, mailAddress, places, username) => {
+    await setDoc(doc(db, "User", id), {
+        friends: friends,
+        mailAddress: mailAddress,
+        places: places,
+        username: username,
+    });
+    console.log("set user : " + id);
 }
