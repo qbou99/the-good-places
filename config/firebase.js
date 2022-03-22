@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc } from "firebase/firestore";
+
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -15,6 +17,22 @@ const Firebase = initializeApp(firebaseConfig);
 
 export default Firebase;
 export const db = getFirestore(Firebase);
+
+
+export const getUserId = async () => {
+    const auth = getAuth();
+    let id;
+    await onAuthStateChanged(auth, (user) => {
+        if (user)
+            id = user.uid;
+        else
+            id = "";
+        console.log(id)
+    });
+    console.log(id)
+
+    return id;
+}
 
 export const getData = async (table) => {
     const col = collection(db, table);
@@ -65,17 +83,28 @@ export const getPlacesById = async (id) => {
 }
 
 export const addPlace = async (address, coordinates, description, name, tags) => {
-    await addDoc(collection(db, "Places"), {
+    const place = await addDoc(collection(db, "Places"), {
         address: address,
         coordinates: coordinates,
         description: description,
         name: name,
         tags: tags,
     })
+    
+    const id = await getUserId();
+
+    let user = await getUserById(id);
+    let places = user.places || [];
+    places.push(place.id);
+
+    await setDoc(doc(db, "User", id), {
+        ...user,
+        places: places,
+    });
     console.log("add place : " + name);
 }
 
-export const addUser = async (username, mailAddress, friends = null, places = null) => {
+export const addUser = async (username, mailAddress, friends = [], places = []) => {
     await addDoc(collection(db, "User"), {
         friends: friends,
         mailAddress: mailAddress,
@@ -96,7 +125,7 @@ export const setPlace = async (id, address, coordinates, description, name, tags
     console.log("set place : " + id);
 }
 
-export const setUser = async (id, username, mailAddress, friends = null, places = null) => {
+export const setUser = async (id, username, mailAddress, friends = [], places = []) => {
     await setDoc(doc(db, "User", id), {
         friends: friends,
         mailAddress: mailAddress,
@@ -104,4 +133,26 @@ export const setUser = async (id, username, mailAddress, friends = null, places 
         username: username,
     });
     console.log("set user : " + id);
+}
+
+export const addFriend = async (friendId) => {
+    const id = await getUserId();
+
+    let user = await getUserById(id);
+    let friends = user.friends || [];
+    friends.push(friendId);
+
+    await setDoc(doc(db, "User", id), {
+        ...user,
+        friends: friends,
+    });
+
+    user = await getUserById(friendId);
+    friends = user.friends || [];
+    friends.push(id)
+
+    await setDoc(doc(db, "User", friendId), {
+        ...user,
+        friends: friends,
+    });
 }

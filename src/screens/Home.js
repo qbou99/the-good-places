@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { Button } from '@ui-kitten/components'
-import { signOut, getAuth } from 'firebase/auth';
+import { signOut, getAuth, onAuthStateChanged } from 'firebase/auth';
 
 import Map from "../components/Map"
 import PlaceList from '../components/PlaceList';
@@ -12,7 +12,7 @@ import TagsList from '../components/TagsList';
 const auth = getAuth();
 
 const Home = ({ navigation }) => {
-
+    
     const handleSignOut = () => {
         signOut(auth)
             .then(() => {
@@ -29,6 +29,7 @@ const Home = ({ navigation }) => {
             >
                 <Text style={styles.buttonText}>Déco</Text>
             </TouchableOpacity>
+            <Button onPress={() => { navigation.navigate("ViewFriends"); }}>Mes amis</Button>
         </View>
     );
 
