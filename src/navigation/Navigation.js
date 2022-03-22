@@ -8,6 +8,8 @@ import Search from '../screens/Search';
 import PlaceDetails from '../screens/PlaceDetails';
 import EditPlace from '../screens/EditPlace';
 import Authentication from '../screens/Authentication';
+import Friends from '../screens/Friends';
+import AddFriend from '../screens/AddFriend';
 
 const MapNavigation = createStackNavigator();
 const SearchNavigation = createStackNavigator();
@@ -41,6 +43,16 @@ function mapStackScreens() {
         name="ViewEditPlace"
         component={EditPlace}
         options={{ title: 'Editer' }}
+      />
+      <MapNavigation.Screen
+        name="ViewFriends"
+        component={Friends}
+        options={{ title: 'Amis' }}
+      />
+      <MapNavigation.Screen
+        name="ViewAddFriend"
+        component={AddFriend}
+        options={{ title: 'Amis' }}
       />
     </MapNavigation.Navigator>
   )
@@ -108,7 +120,7 @@ function RootStack() {
         options={{ title: 'Authentification' }}
       />
     </MainNavigation.Navigator>,
-    InAppNavigation() 
+    InAppNavigation()
   );
 }
 

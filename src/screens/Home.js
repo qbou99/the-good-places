@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
-import { Button } from "@ui-kitten/components";
-import { signOut, getAuth } from "firebase/auth";
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Button } from '@ui-kitten/components'
+import { signOut, getAuth, onAuthStateChanged } from 'firebase/auth';
 
 import Map from "../components/Map";
 import PlaceList from "../components/PlaceList";
@@ -12,37 +12,27 @@ import TagsList from "../components/TagsList";
 const auth = getAuth();
 
 const Home = ({ navigation }) => {
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        navigation.navigate("Authentification");
-      })
-      .catch((error) => alert(error.message));
-  };
+    
+    const handleSignOut = () => {
+        signOut(auth)
+            .then(() => {
+                navigation.navigate("Authentification");
+            })
+            .catch(error => alert(error.message))
+    }
 
-  return (
-    <View>
-      <Map />
-      <Button
-        onPress={() => {
-          navigation.navigate("ViewEditPlace");
-        }}
-      >
-        Ajouter
-      </Button>
-      <TagsList
-        tags={[
-          { name: "camera-alt", pack: "material" },
-          { name: "local-pizza", pack: "material" },
-          { name: "glass-cocktail", pack: "materialcommunity" },
-        ]}
-      />
-      <PlaceList />
-      <TouchableOpacity onPress={handleSignOut} style={styles.button}>
-        <Text style={styles.buttonText}>Déco</Text>
-      </TouchableOpacity>
-    </View>
-  );
+    return (
+        <View><Map /><Button onPress={() => { navigation.navigate("ViewEditPlace"); }}>Ajouter</Button><TagsList tags={[{ name: "camera-alt", pack: "material" }, { name: "local-pizza", pack: "material" }, { name: "glass-cocktail", pack: "materialcommunity" }]} /><PlaceList />
+            <TouchableOpacity
+                onPress={handleSignOut}
+                style={styles.button}
+            >
+                <Text style={styles.buttonText}>Déco</Text>
+            </TouchableOpacity>
+            <Button onPress={() => { navigation.navigate("ViewFriends"); }}>Mes amis</Button>
+        </View>
+    );
+
 };
 
 export default Home;
