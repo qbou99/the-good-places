@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc } from "firebase/firestore";
-
+import Toast from 'react-native-root-toast';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -90,7 +90,7 @@ export const addPlace = async (address, coordinates, description, name, tags) =>
         name: name,
         tags: tags,
     })
-    
+
     const id = await getUserId();
 
     let user = await getUserById(id);
@@ -139,20 +139,32 @@ export const addFriend = async (friendId) => {
     const id = await getUserId();
 
     let user = await getUserById(id);
-    let friends = user.friends || [];
-    friends.push(friendId);
+    let friend = await getUserById(friendId);
 
-    await setDoc(doc(db, "User", id), {
-        ...user,
-        friends: friends,
-    });
+    if (friend != null) {
+        let friends = user.friends || [];
+        friends.push(friendId);
 
-    user = await getUserById(friendId);
-    friends = user.friends || [];
-    friends.push(id)
+        await setDoc(doc(db, "User", id), {
+            ...user,
+            friends: friends,
+        });
 
-    await setDoc(doc(db, "User", friendId), {
-        ...user,
-        friends: friends,
-    });
+        friends = friend.friends || [];
+        friends.push(id)
+
+        await setDoc(doc(db, "User", friendId), {
+            ...friend,
+            friends: friends,
+        });
+
+        Toast.show('Ami ajouté', {
+            duration: Toast.durations.LONG,
+        });
+    }
+    else {
+        Toast.show('Id inexistant', {
+            duration: Toast.durations.LONG,
+        });
+    }
 }
