@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { List } from '@ui-kitten/components';
+import { connect } from "react-redux";
 import { getData, getPlaces } from '../../config/firebase'
 
 import PlaceListItem from './PlaceListItem';
 
-const PlaceList = ({ onClick }) => {
+const PlaceList = ({ onClick, visiblePlaces, dispatch }) => {
   const [isRefreshing, setRefreshing] = useState(false);
   const [places, setPlaces] = useState([]);
 
@@ -29,7 +30,7 @@ const PlaceList = ({ onClick }) => {
   return (
     <>
         <List
-          data={places}
+          data={visiblePlaces}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => 
             <PlaceListItem
@@ -45,7 +46,13 @@ const PlaceList = ({ onClick }) => {
 
 };
 
-export default PlaceList;
+const mapStateToProps = (state) => {
+  return {
+    visiblePlaces: state.places,
+  };
+};
+
+export default connect(mapStateToProps)(PlaceList);
 
 const styles = StyleSheet.create({
   iconContainer: {

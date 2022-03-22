@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Text } from '@ui-kitten/components'
 import { Icon } from '@ui-kitten/components';
 
 import TagsList from './TagsList';
