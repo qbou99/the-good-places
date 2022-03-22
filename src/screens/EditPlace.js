@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input, Select, SelectItem, Button, Modal, Card, Text, List, ListItem } from '@ui-kitten/components';
 
 import { forward, reverse } from '../api/positionstack'
-import { setPlace } from '../../config/firebase'
+import { addPlace } from '../../config/firebase'
 
 const EditPlace = ( {navigation} ) => {
     const [name, setName] = useState('');
@@ -55,7 +55,7 @@ const EditPlace = ( {navigation} ) => {
                         const reverseData = await reverse(place.latitude, place.longitude);
                         place = reverseData.data.find(p => p.type === "address");
                     }
-                    await setPlace(place.label, {latitude: place.latitude, longitude: place.longitude}, description, name, [{name:"local-pizza", pack:"material"}])
+                    await addPlace(place.label, {latitude: place.latitude, longitude: place.longitude}, description, name, [{name:"local-pizza", pack:"material"}])
                     navigation.goBack()
                 } else
                     setVisible(true);
