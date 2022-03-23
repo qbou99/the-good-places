@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Keyboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input, Button } from '@ui-kitten/components';
+import Toast from 'react-native-root-toast';
+import SvgQRCode from 'react-native-qrcode-svg';
 
-import { addFriend } from '../../config/firebase'
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { addFriend, getUserId } from '../../config/firebase'
 
 const AddFriend = ({ navigation }) => {
     const [friendId, setFriendId] = useState('');
+    const [userId, setUserId] = useState('userId');
+
+
+
+    useEffect(() => {
+        (async () => {
+            setUserId(await getUserId());
+        })();
+    }, []);
 
     return (
-        <SafeAreaView style={{  }}>
+        <SafeAreaView style={{}}>
+            <SvgQRCode value={userId} />
             <Input
                 placeholder='FriendId'
                 value={friendId}
@@ -18,8 +29,18 @@ const AddFriend = ({ navigation }) => {
             />
 
             <Button onPress={async () => {
-                await addFriend(friendId)
-                navigation.goBack()
+                if (await addFriend(friendId)) {
+                    Toast.show('Ami ajouté', {
+                        duration: Toast.durations.LONG,
+                    });
+                    navigation.goBack();
+                }
+                else {
+                    Toast.show('ID ami non valide', {
+                        duration: Toast.durations.LONG,
+                    });
+                    Keyboard.dismiss();
+                }
             }}>
                 Ajouter
             </Button>

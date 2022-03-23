@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc } from "firebase/firestore";
-import Toast from 'react-native-root-toast';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -27,10 +26,7 @@ export const getUserId = async () => {
             id = user.uid;
         else
             id = "";
-        console.log(id)
     });
-    console.log(id)
-
     return id;
 }
 
@@ -64,10 +60,11 @@ export const getUserById = async (id) => {
 
     if (docSnap.exists()) {
         console.log("User data:", docSnap.data());
+        return docSnap.data();
     } else {
         console.log("Pas de user id : " + id);
+        return null;
     }
-    return docSnap.data();
 }
 
 export const getPlacesById = async (id) => {
@@ -76,10 +73,11 @@ export const getPlacesById = async (id) => {
 
     if (docSnap.exists()) {
         console.log("Place data:", docSnap.data());
+        return docSnap.data();
     } else {
         console.log("Pas de place id : " + id);
+        return null;
     }
-    return docSnap.data();
 }
 
 export const addPlace = async (address, coordinates, description, name, tags) => {
@@ -138,11 +136,15 @@ export const setUser = async (id, username, mailAddress, friends = [], places = 
 export const addFriend = async (friendId) => {
     const id = await getUserId();
 
-    let user = await getUserById(id);
     let friend = await getUserById(friendId);
+    let user = await getUserById(id);
 
-    if (friend != null) {
-        let friends = user.friends || [];
+    if (friend !== null) {
+        let friends = user?.friends || [];
+
+        if (friends.includes(friendId))
+            return false;
+            
         friends.push(friendId);
 
         await setDoc(doc(db, "User", id), {
@@ -150,7 +152,7 @@ export const addFriend = async (friendId) => {
             friends: friends,
         });
 
-        friends = friend.friends || [];
+        friends = friend?.friends || [];
         friends.push(id)
 
         await setDoc(doc(db, "User", friendId), {
@@ -158,13 +160,9 @@ export const addFriend = async (friendId) => {
             friends: friends,
         });
 
-        Toast.show('Ami ajouté', {
-            duration: Toast.durations.LONG,
-        });
+        return true;
     }
     else {
-        Toast.show('Id inexistant', {
-            duration: Toast.durations.LONG,
-        });
+        return false;
     }
 }
