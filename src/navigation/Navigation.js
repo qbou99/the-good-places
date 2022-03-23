@@ -10,6 +10,7 @@ import EditPlace from '../screens/EditPlace';
 import Authentication from '../screens/Authentication';
 import Friends from '../screens/Friends';
 import AddFriend from '../screens/AddFriend';
+import ScanQrCode from '../screens/ScanQrCode';
 
 const MapNavigation = createStackNavigator();
 const SearchNavigation = createStackNavigator();
@@ -52,6 +53,11 @@ function mapStackScreens() {
       <MapNavigation.Screen
         name="ViewAddFriend"
         component={AddFriend}
+        options={{ title: 'Amis' }}
+      />
+      <MapNavigation.Screen
+        name="ViewScanQrCode"
+        component={ScanQrCode}
         options={{ title: 'Amis' }}
       />
     </MapNavigation.Navigator>
