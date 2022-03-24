@@ -143,8 +143,6 @@ export default Authentication;
 const styles = StyleSheet.create({
   container1: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
-    //backgroundColor: "red",
   },
   container2: {
     justifyContent: "center",
