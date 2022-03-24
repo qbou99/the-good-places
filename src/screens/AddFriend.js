@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Keyboard, Text, KeyboardAvoidingView, View } from 'react-native';
+import { StyleSheet, Keyboard, Text, KeyboardAvoidingView, View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input, Button } from '@ui-kitten/components';
 import Toast from 'react-native-root-toast';
@@ -20,45 +20,49 @@ const AddFriend = ({ navigation }) => {
     }, []);
 
     return (
-        <KeyboardAvoidingView
+        <SafeAreaView
             style={styles.container}
-            behavior="padding"
+        //contentContainerStyle={styles.container2}
         >
-            <Text style={styles.title}>Montrer ce QrCode à quelqu'un pour qu'il puisse vous ajouter dans sa liste d'amis</Text>
-            <SvgQRCode value={userId} size={300} />
+            <ScrollView>
+                <KeyboardAvoidingView style={styles.container2} behavior="padding">
 
-            <View style={styles.buttons}>
-                <Input
-                    placeholder='FriendId'
-                    value={friendId}
-                    onChangeText={nextValue => setFriendId(nextValue)}
-                    style={styles.textInput}
-                />
+                    <Text style={styles.title}>Montrer ce QrCode à quelqu'un pour qu'il puisse vous ajouter dans sa liste d'amis</Text>
+                    <SvgQRCode value={userId} size={300} />
+
+                    <View style={styles.buttons}>
+                        <Input
+                            placeholder='FriendId'
+                            value={friendId}
+                            onChangeText={nextValue => setFriendId(nextValue)}
+                            style={styles.textInput}
+                        />
 
 
-                <Button style={styles.button} onPress={async () => {
-                    if (await addFriend(friendId)) {
-                        Toast.show('Ami ajouté', {
-                            duration: Toast.durations.LONG,
-                        });
-                        navigation.goBack();
-                    }
-                    else {
-                        Toast.show('ID ami non valide', {
-                            duration: Toast.durations.LONG,
-                        });
-                        Keyboard.dismiss();
-                    }
-                }}>
-                    Ajouter
-                </Button>
-            </View>
+                        <Button style={styles.button} onPress={async () => {
+                            if (await addFriend(friendId)) {
+                                Toast.show('Ami ajouté', {
+                                    duration: Toast.durations.LONG,
+                                });
+                                navigation.goBack();
+                            }
+                            else {
+                                Toast.show('ID ami non valide', {
+                                    duration: Toast.durations.LONG,
+                                });
+                                Keyboard.dismiss();
+                            }
+                        }}>
+                            Ajouter
+                        </Button>
+                    </View>
 
-            <Button style={styles.button} onPress={() => { navigation.navigate("ViewScanQrCode"); }}>
-                Scanner un QRCode
-            </Button>
-        </KeyboardAvoidingView>
-    );
+                    <Button style={styles.button} onPress={() => { navigation.navigate("ViewScanQrCode"); }}>
+                        Scanner un QRCode
+                    </Button>
+                </KeyboardAvoidingView>
+            </ScrollView>
+        </SafeAreaView>);
 };
 
 export default AddFriend;
@@ -66,6 +70,9 @@ export default AddFriend;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+
+    container2: {
         justifyContent: 'center',
         alignItems: 'center',
         margin: 5
