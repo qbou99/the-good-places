@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, Image } from "react-native";
 import { Spinner } from "@ui-kitten/components";
 import { connect } from "react-redux";
 import MapView from "react-native-maps";
@@ -98,6 +98,9 @@ const Map = ({ navigation, visiblePlaces, dispatch }) => {
           {places?.map((element, i) => {
             return <Marker coordinate={element.coordinates} key={element.id} />;
           })}
+          <Image style={styles.target}
+            source={require('../../assets/target.png')}
+          />
         </MapView>
       )}
     </>
@@ -127,6 +130,15 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height - 450,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  target: {
+    zIndex: 100,
+    width: 50,
+    height: 50,
+    //marginVertical: (Dimensions.get("window").height - 450) / 2,
+    //marginHorizontal: Dimensions.get("window").width / 2,
   },
   loader: {
     justifyContent: "center",
