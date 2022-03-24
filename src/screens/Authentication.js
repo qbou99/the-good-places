@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import {
   getAuth,
@@ -69,67 +70,66 @@ const Authentication = ({ navigation }) => {
   }
 
   return (
-    <ScrollView
-      style={styles.container1}
-      //contentContainerStyle={styles.container2}
-    >
-      <KeyboardAvoidingView style={[styles.container2]} behavior="padding">
-        <Text
-          style={{
-            fontFamily: "Futura",
-            fontSize: 72,
-            textAlign: "center",
-            color: "#6db966",
-            paddingBottom: 24,
-          }}
-        >
-          The{"\n"}Good{"\n"}Places
-        </Text>
-        <View style={styles.inputContainer}>
-          {login ? null : (
+   
+      <ScrollView style={styles.container1}>
+        <KeyboardAvoidingView style={[styles.container2]} behavior="padding">
+          <Text
+            style={{
+              fontFamily: "Futura",
+              fontSize: 72,
+              textAlign: "center",
+              color: "#6db966",
+              paddingBottom: 24,
+              lineHeight: 80
+            }}
+          >
+            The{"\n"}Good{"\n"}Places
+          </Text>
+          <View style={styles.inputContainer}>
+            {login ? null : (
+              <TextInput
+                placeholder="Username"
+                value={username}
+                onChangeText={(text) => setUsername(text)}
+                style={styles.input}
+              />
+            )}
             <TextInput
-              placeholder="Username"
-              value={username}
-              onChangeText={(text) => setUsername(text)}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
               style={styles.input}
             />
-          )}
-          <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            style={styles.input}
-            secureTextEntry
-          />
-        </View>
+            <TextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              style={styles.input}
+              secureTextEntry
+            />
+          </View>
 
-        <View style={styles.buttonContainer}>
-          {login ? (
-            <TouchableOpacity onPress={handleLogin} style={styles.button}>
-              <Text style={styles.buttonText}>Connexion</Text>
+          <View style={styles.buttonContainer}>
+            {login ? (
+              <TouchableOpacity onPress={handleLogin} style={styles.button}>
+                <Text style={styles.buttonText}>Connexion</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={handleSignUp} style={[styles.button]}>
+                <Text style={styles.buttonText}>Inscription</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              onPress={toogleLogin}
+              style={[styles.button, styles.buttonOutline]}
+            >
+              <Text style={styles.buttonOutlineText}>
+                {login ? "S'inscrire" : "Se connecter"}
+              </Text>
             </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={handleSignUp} style={[styles.button]}>
-              <Text style={styles.buttonText}>Inscription</Text>
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity
-            onPress={toogleLogin}
-            style={[styles.button, styles.buttonOutline]}
-          >
-            <Text style={styles.buttonOutlineText}>
-              {login ? "S'inscrire" : "Se connecter"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </ScrollView>
   );
 };
 
@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
   container2: {
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 100
   },
   inputContainer: {
     width: "80%",
