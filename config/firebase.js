@@ -144,7 +144,7 @@ export const addFriend = async (friendId) => {
 
         if (friends.includes(friendId))
             return false;
-            
+
         friends.push(friendId);
 
         await setDoc(doc(db, "User", id), {
@@ -165,4 +165,15 @@ export const addFriend = async (friendId) => {
     else {
         return false;
     }
+}
+
+export const getFriends = async () => {
+    const id = await getUserId();
+
+    let user = await getUserById(id);
+
+    if (user != null)
+        return user.friends;
+    else
+        return null;
 }
