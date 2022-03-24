@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -12,6 +13,10 @@ import { MaterialCommunityIconsPack } from './src/helpers/materialcommunity-icon
 
 import Navigation from './src/navigation/Navigation';
 import { Store, Persistor } from './src/store/config';
+
+// Suppression de warning provenant du package 'firebase' (pas d'autre solution à ce jour)
+LogBox.ignoreLogs(['Setting a timer for a long period of time']);
+LogBox.ignoreLogs(['AsyncStorage has been extracted from react-native core and will be removed in a future release']);
 
 export default function App() {
   return (

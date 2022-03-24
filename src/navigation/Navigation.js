@@ -18,7 +18,7 @@ const TabNavigation = createBottomTabNavigator();
 
 const MainNavigation = createStackNavigator();
 
-function mapStackScreens() {
+function MapStackScreens() {
   return (
     <MapNavigation.Navigator
       screenOptions={{
@@ -64,7 +64,7 @@ function mapStackScreens() {
   )
 };
 
-function searchStackScreens() {
+function SearchStackScreens() {
   return (
     <SearchNavigation.Navigator
       screenOptions={{
@@ -103,11 +103,11 @@ function InAppNavigation() {
       }} tabBar={BottomTabBar}>
       <TabNavigation.Screen
         name="Map"
-        component={mapStackScreens}
+        component={MapStackScreens}
       />
       <TabNavigation.Screen
         name="Chercher"
-        component={searchStackScreens}
+        component={SearchStackScreens}
       />
     </TabNavigation.Navigator>
   );
