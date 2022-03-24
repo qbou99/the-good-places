@@ -8,6 +8,7 @@ import {
   View,
   ScrollView,
   SafeAreaView,
+  StatusBar 
 } from "react-native";
 import {
   getAuth,
@@ -70,8 +71,11 @@ const Authentication = ({ navigation }) => {
   }
 
   return (
-   
-      <ScrollView style={styles.container1}>
+    <SafeAreaView
+      style={styles.container1}
+    //contentContainerStyle={styles.container2}
+    >
+      <ScrollView>
         <KeyboardAvoidingView style={[styles.container2]} behavior="padding">
           <Text
             style={{
@@ -130,6 +134,7 @@ const Authentication = ({ navigation }) => {
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -138,12 +143,13 @@ export default Authentication;
 const styles = StyleSheet.create({
   container1: {
     flex: 1,
+    paddingTop: StatusBar.currentHeight,
     //backgroundColor: "red",
   },
   container2: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 100
+    marginTop: 50
   },
   inputContainer: {
     width: "80%",
