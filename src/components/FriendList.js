@@ -7,7 +7,7 @@ import FriendListItem from './FriendListItem';
 
 const FriendList = ({ onClick, dispatch }) => {
     const [isRefreshing, setRefreshing] = useState(false);
-    const [friends, setFriends] = useState([]);
+    const [friends, setFriends] = useState(new Map());
 
     const navigateToFriendDetails = (friendID) => {
         navigation.navigate("ViewFriendDetails", { friendID });
@@ -22,14 +22,15 @@ const FriendList = ({ onClick, dispatch }) => {
     const searchFriends = async () => {
         setRefreshing(true)
         const res = await getFriends()
-        if (res != null) {
-            let map = new Map();
-            res.forEach(element => {
-                map.set("id", element);
-            });
+        console.log(res)
 
-            setFriends(map)
+        if (res != null) {
+            res.forEach(element => {
+                friends.set("id", element);
+            });
+            console.log(friends)
             setRefreshing(false)
+
         }
     };
 
