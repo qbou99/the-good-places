@@ -3,11 +3,13 @@ import { View, StyleSheet, Text } from 'react-native';
 import { Button } from '@ui-kitten/components'
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-//import FriendList from '../components/FriendList';
+import FriendList from '../components/FriendList';
 
 const Friends = ({ navigation }) => {
     return (
         <SafeAreaView>
+            <FriendList></FriendList>
+
             <Button onPress={() => { navigation.navigate("ViewAddFriend"); }}>Ajouter un ami</Button>
         </SafeAreaView>
     );
