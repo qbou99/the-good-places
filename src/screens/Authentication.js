@@ -35,12 +35,7 @@ const Authentication = ({ navigation }) => {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigation.navigate("ViewHome");
-      }
-    });
-    return unsubscribe;
+
   }, []);
 
   const handleSignUp = () => {
