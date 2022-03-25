@@ -1,29 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { Text } from '@ui-kitten/components';
+import { Text, List } from '@ui-kitten/components';
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import DisplayError from '../components/DisplayError';
-import TagsIcon from '../components/TagsIcon';
+const FriendDetails = ({ route }) => {
 
-const FriendDetails = ({ route, dispatch }) => {
+  const { friendData } = route.params;
+
+  const [friend, setFriend] = useState([]);
+  const [isRefreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      await searchFriendInfo()
+    })();
+  }, []);
+
+  const searchFriendInfo = async () => {
+    setRefreshing(true)
+    const res = await getUserById(friendData)
+    if (res != null) {
+      setFriend(res)
+      setRefreshing(false)
+    }
+  };
+
+
   return (
-    <View>
-      <Text>{"Lorem ipsum"}</Text>
-      <TagsIcon />
-      <Text>Ami</Text>
-    </View>
+    <SafeAreaView>
+      <Text style={styles.title}>{friend.username}</Text>
+      <>
+        <List
+          data={friend}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) =>
+            <PlaceListItem
+              placeData={item.places}
+              onClick={navigateToPlaceDetails}
+            />
+          }
+          refreshing={isRefreshing}
+          onRefresh={searchFriendInfo}
+        />
+      </>
+    </SafeAreaView>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    favRestaurants: state.favRestaurantsID
-  }
-}
-
-export default connect(mapStateToProps)(FriendDetails);
+export default FriendDetails;
 
 const styles = StyleSheet.create({
-
+  title: {
+    margin: 10,
+    fontSize: 16,
+    textAlign: 'center'
+  },
 });

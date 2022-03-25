@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Keyboard, Text, KeyboardAvoidingView, View, ScrollView } from 'react-native';
+import { StyleSheet, Keyboard, KeyboardAvoidingView, View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Input, Button } from '@ui-kitten/components';
+import { Input, Button, Text } from '@ui-kitten/components';
 import Toast from 'react-native-root-toast';
 import SvgQRCode from 'react-native-qrcode-svg';
 
@@ -91,11 +91,11 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        marginTop: 15,
+        marginTop: 12,
         backgroundColor: '#6db966',
         borderColor: '#6db966',
         borderRadius: 10,
-        height: 30
+        height: 45
     },
 
     textInput: {

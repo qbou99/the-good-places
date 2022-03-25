@@ -5,13 +5,9 @@ import { getFriends } from '../../config/firebase'
 
 import FriendListItem from './FriendListItem';
 
-const FriendList = ({ onClick, dispatch }) => {
+const FriendList = ({ navigation, onClick, dispatch }) => {
     const [isRefreshing, setRefreshing] = useState(false);
     const [friends, setFriends] = useState([]);
-
-    const navigateToFriendDetails = (friendID) => {
-        navigation.navigate("ViewFriendDetails", { friendID });
-    };
 
     useEffect(() => {
         (async () => {
@@ -35,7 +31,7 @@ const FriendList = ({ onClick, dispatch }) => {
                 renderItem={({ item }) =>
                     <FriendListItem
                         friendData={item}
-                        onClick={navigateToFriendDetails}
+                        navigation={navigation}
                     />
                 }
                 refreshing={isRefreshing}

@@ -17,6 +17,7 @@ import Friends from "../screens/Friends";
 import AddFriend from "../screens/AddFriend";
 import ScanQrCode from "../screens/ScanQrCode";
 import Settings from "../screens/Settings";
+import FriendDetails from "../screens/FriendDetails";
 
 const MapNavigation = createStackNavigator();
 const SearchNavigation = createStackNavigator();
@@ -91,6 +92,11 @@ function FriendsStackScreens() {
       <FriendsNavigation.Screen
         name="ViewAddFriend"
         component={AddFriend}
+        options={{ title: "Amis" }}
+      />
+      <FriendsNavigation.Screen
+        name="ViewFriendDetails"
+        component={FriendDetails}
         options={{ title: "Amis" }}
       />
       <FriendsNavigation.Screen
