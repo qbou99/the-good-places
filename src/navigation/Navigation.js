@@ -1,6 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { StyleSheet } from 'react-native';
 import {
   BottomNavigation,
   BottomNavigationTab,
@@ -120,6 +121,7 @@ function SettingsStackScreens() {
 
 const BottomTabBar = ({ navigation, state }) => (
   <BottomNavigation
+    style={styles.bottomTabNav}
     selectedIndex={state.index}
     onSelect={(index) => navigation.navigate(state.routeNames[index])}
   >
@@ -166,3 +168,10 @@ function RootStack({ isSignedIn }) {
 }
 
 export default RootStack;
+
+const styles = StyleSheet.create({
+  bottomTabNav: {
+    height: 75,
+    paddingBottom: 20,
+  },
+})
