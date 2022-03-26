@@ -7,22 +7,20 @@ import DisplayError from '../components/DisplayError';
 import TagsIcon from '../components/TagsIcon';
 
 const PlaceDetails = ({ route, dispatch }) => {
+
+  const { placeData } = route.params;
+
+  
   return (
     <View>
-      <Text>{"Lorem ipsum"}</Text>
+      <Text>{placeData.address}</Text>
       <TagsIcon />
       <Text>Address</Text>
     </View>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    favRestaurants: state.favRestaurantsID
-  }
-}
-
-export default connect(mapStateToProps)(PlaceDetails);
+export default PlaceDetails;
 
 const styles = StyleSheet.create({
 

@@ -4,12 +4,17 @@ import { connect } from 'react-redux';
 import { Text, List } from '@ui-kitten/components';
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const FriendDetails = ({ route }) => {
+import { getUserById, getPlacesById } from '../../config/firebase';
+import PlaceListItem from '../components/PlaceListItem';
+
+const FriendDetails = ({ route, navigation }) => {
 
   const { friendData } = route.params;
 
   const [friend, setFriend] = useState([]);
   const [isRefreshing, setRefreshing] = useState(false);
+  const [placeData, setPlaceData] = useState([]);
+  const [places, setPlaces] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -22,22 +27,30 @@ const FriendDetails = ({ route }) => {
     const res = await getUserById(friendData)
     if (res != null) {
       setFriend(res)
+      let tabPlace = []
+      for (const element of res.places) {
+        const place = await getPlacesById(element)
+        if (place != null)
+          if (!tabPlace.includes(place))
+            tabPlace.push(place)
+      }
+      setPlaceData(tabPlace)
+      console.log(placeData)
       setRefreshing(false)
     }
-  };
-
+  }
 
   return (
     <SafeAreaView>
-      <Text style={styles.title}>{friend.username}</Text>
+      <Text style={styles.title}>Lieux enregistrés de {friend.username}</Text>
       <>
         <List
-          data={friend}
+          data={placeData}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) =>
             <PlaceListItem
-              placeData={item.places}
-              onClick={navigateToPlaceDetails}
+              place={item}
+              navigation={navigation}
             />
           }
           refreshing={isRefreshing}

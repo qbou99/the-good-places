@@ -1,19 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text } from '@ui-kitten/components'
 import { Icon } from '@ui-kitten/components';
 
+import { getPlacesById } from '../../config/firebase';
 import TagsList from './TagsList';
 
-const PlaceListItem = ({ placeData, onClick }) => {
+const PlaceListItem = ({ place, navigation }) => {
+
+  const [placeData, setPlaceData] = useState([]);
+
+  function navigateToPlaceDetails() {
+    return navigation.navigate("ViewPlaceDetails", { placeData: placeData });
+  }
+
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={navigateToPlaceDetails}>
       <View style={styles.informationContainer}>
-        <Text style={styles.title}>{placeData.name}</Text>
-        <Text style={styles.city}>{placeData.description}</Text>
+        <Text style={styles.title}>{place.name}</Text>
+        <Text style={styles.city}>{place.description}</Text>
       </View>
       <View style={styles.iconContainer}>
-        <TagsList tags={placeData.tags} />
+        <TagsList tags={place.tags} />
         <Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' />
       </View>
     </TouchableOpacity>
@@ -28,6 +36,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     paddingVertical: 8,
+    borderBottomWidth: 2,
+    borderColor: '#e6e6e6',
   },
   informationContainer: {
     flex: 1,

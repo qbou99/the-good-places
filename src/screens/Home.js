@@ -19,7 +19,7 @@ const Home = ({ navigation }) => {
       >
         Ajouter
       </Button>
-      <PlaceList />
+      <PlaceList navigation={navigation} />
     </View>
   );
 };
