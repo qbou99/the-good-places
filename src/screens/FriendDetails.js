@@ -9,7 +9,7 @@ import PlaceListItem from '../components/PlaceListItem';
 
 const FriendDetails = ({ route, navigation }) => {
 
-  const { friendData } = route.params;
+  const { friendData, friendName } = route.params;
 
   const [friend, setFriend] = useState([]);
   const [isRefreshing, setRefreshing] = useState(false);
@@ -32,7 +32,7 @@ const FriendDetails = ({ route, navigation }) => {
 
   return (
     <SafeAreaView>
-      <Text style={styles.title}>Lieux enregistrés de {friend.username}</Text>
+      <Text style={styles.title}>Lieux enregistrés de {friendName}</Text>
       <>
         <List
           data={placeData}
@@ -41,6 +41,7 @@ const FriendDetails = ({ route, navigation }) => {
             <PlaceListItem
               place={item}
               navigation={navigation}
+              map={false}
             />
           }
           refreshing={isRefreshing}

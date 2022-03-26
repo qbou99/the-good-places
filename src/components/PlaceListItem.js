@@ -6,7 +6,7 @@ import { Icon } from '@ui-kitten/components';
 import { getPlacesById } from '../../config/firebase';
 import TagsList from './TagsList';
 
-const PlaceListItem = ({ place, navigation, centerOnPlace }) => {
+const PlaceListItem = ({ place, navigation, centerOnPlace, map }) => {
 
   const [placeData, setPlaceData] = useState([]);
 
@@ -22,7 +22,7 @@ const PlaceListItem = ({ place, navigation, centerOnPlace }) => {
       </View>
       <View style={styles.iconContainer}>
         <TagsList tags={place.tags} />
-        <Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' />
+        {map ? <Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' /> : <></>}
       </View>
     </TouchableOpacity>
   );

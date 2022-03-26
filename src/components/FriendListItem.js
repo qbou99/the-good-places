@@ -9,7 +9,7 @@ const FriendListItem = ({ navigation, friendData }) => {
     const [friend, setFriend] = useState([]);
 
     function goTofriendDetails() {
-        return navigation.navigate("ViewFriendDetails", { friendData: friendData });
+        return navigation.navigate("ViewFriendDetails", { friendData: friendData, friendName: friend.username });
     }
 
     useEffect(() => {
