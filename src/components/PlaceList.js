@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { List } from '@ui-kitten/components';
 import { connect } from "react-redux";
-import { getData, getPlaces, getUserById, getUserId, getPlacesById } from '../../config/firebase'
+import { getUserId, getUserPlaces } from '../../config/firebase'
 
 import PlaceListItem from './PlaceListItem';
 
@@ -22,18 +22,8 @@ const PlaceList = ({ onClick, visiblePlaces, dispatch, navigation }) => {
 
   const searchPlaces = async () => {
     setRefreshing(true)
-    const res = await getUserById(userId)
-    if (res != null) {
-      let tabPlace = []
-      for (const element of res.places) {
-        const place = await getPlacesById(element)
-        if (place != null)
-          if (!tabPlace.includes(place))
-          tabPlace.push(place)
-      }
-      setPlaces(tabPlace)
-      console.log(places)
-    }
+    const res = await getUserPlaces(userId)
+    setPlaces(res);
     setRefreshing(false)
   };
 

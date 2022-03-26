@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Text, List } from '@ui-kitten/components';
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { getUserById, getPlacesById } from '../../config/firebase';
+import { getUserPlaces } from '../../config/firebase';
 import PlaceListItem from '../components/PlaceListItem';
 
 const FriendDetails = ({ route, navigation }) => {
@@ -24,20 +24,10 @@ const FriendDetails = ({ route, navigation }) => {
 
   const searchFriendInfo = async () => {
     setRefreshing(true)
-    const res = await getUserById(friendData)
-    if (res != null) {
-      setFriend(res)
-      let tabPlace = []
-      for (const element of res.places) {
-        const place = await getPlacesById(element)
-        if (place != null)
-          if (!tabPlace.includes(place))
-            tabPlace.push(place)
-      }
-      setPlaceData(tabPlace)
-      console.log(placeData)
-      setRefreshing(false)
-    }
+    const res = await getUserPlaces(friendData)
+    setPlaceData(res)
+    console.log(placeData)
+    setRefreshing(false)
   }
 
   return (

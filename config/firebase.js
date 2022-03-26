@@ -177,3 +177,17 @@ export const getFriends = async () => {
     else
         return null;
 }
+
+export const getUserPlaces = async (userId = null) => {
+    const user = await getUserById(userId || await getUserId())
+    let tabPlace = []
+    if (user != null) {
+      for (const element of user.places) {
+        const place = await getPlacesById(element)
+        if (place != null)
+          if (!tabPlace.includes(place))
+            tabPlace.push(place)
+      }
+    }
+    return tabPlace;
+  }
