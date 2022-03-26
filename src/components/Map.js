@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, Dimensions, Image } from "react-native";
 import { Spinner } from "@ui-kitten/components";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 import * as Location from "expo-location";
@@ -9,11 +9,12 @@ import * as Location from "expo-location";
 import { getUserPlaces } from "../../config/firebase";
 import DisplayError from "./DisplayError";
 
-const Map = ({ navigation, visiblePlaces, dispatch, centerCoords, places }) => {
+const Map = ({ navigation, visiblePlaces, dispatch, places }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isError, setIsError] = useState(false);
   const [location, setLocation] = useState(null);
   const mapRef = useRef(null);
+  const center = useSelector((state) =>state.centerCoords);
 
   const navigateToRestaurantDetails = (restaurantID) => {
     navigation.navigate("ViewRestaurant", { restaurantID });
@@ -57,21 +58,14 @@ const Map = ({ navigation, visiblePlaces, dispatch, centerCoords, places }) => {
   }, []);
 
   useEffect(() => {
+    (async () => {
     if (mapRef.current) {
-      const camera = {
-        center: centerCoords,
-        //pitch: number,
-        //heading: number,
-
-        // Only on iOS MapKit, in meters. The property is ignored by Google Maps.
-        //altitude: number,
-
-        // Only when using Google Maps.
-        //zoom: number
-      };
-      mapRef.current.animateCamera(camera);
+      let camera = await mapRef.current.getCamera()
+      camera = {...camera, center: center.coords}
+      await mapRef.current.animateCamera(camera, { duration: 1000 });
     }
-  }, [centerCoords]);
+  })();
+  }, [center]);
 
   const onRegionChange = (region) => {
     const coordsVisible = getBoundByRegion(region);
@@ -119,10 +113,6 @@ const Map = ({ navigation, visiblePlaces, dispatch, centerCoords, places }) => {
           {places?.map((element, i) => {
             return <Marker coordinate={element.coordinates} key={element.id} />;
           })}
-          <Image
-            style={styles.target}
-            source={require("../../assets/target.png")}
-          />
         </MapView>
       )}
     </>
@@ -156,13 +146,6 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height - 450,
     justifyContent: "center",
     alignItems: "center",
-  },
-  target: {
-    zIndex: 100,
-    width: 50,
-    height: 50,
-    //marginVertical: (Dimensions.get("window").height - 450) / 2,
-    //marginHorizontal: Dimensions.get("window").width / 2,
   },
   loader: {
     justifyContent: "center",

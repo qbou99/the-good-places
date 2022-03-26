@@ -22,7 +22,7 @@ const PlaceListItem = ({ place, navigation, centerOnPlace, map }) => {
       </View>
       <View style={styles.iconContainer}>
         <TagsList tags={place.tags} />
-        {map ? <Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' /> : <></>}
+        {map ? <TouchableOpacity onPress={centerOnPlace}><Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity> : null}
       </View>
     </TouchableOpacity>
   );
