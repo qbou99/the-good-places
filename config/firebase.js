@@ -60,7 +60,7 @@ export const getUserById = async (id) => {
 
     if (docSnap.exists()) {
         console.log("User data:", docSnap.data());
-        return docSnap.data();
+        return {id: docSnap.id, ...docSnap.data()};
     } else {
         console.log("Pas de user id : " + id);
         return null;
@@ -73,7 +73,7 @@ export const getPlacesById = async (id) => {
 
     if (docSnap.exists()) {
         console.log("Place data:", docSnap.data());
-        return docSnap.data();
+        return {id: docSnap.id, ...docSnap.data()};
     } else {
         console.log("Pas de place id : " + id);
         return null;
@@ -100,20 +100,22 @@ export const addPlace = async (address, coordinates, description, name, tags) =>
         places: places,
     });
     console.log("add place : " + name);
+    return place;
 }
 
 export const addUser = async (username, mailAddress, friends = [], places = []) => {
-    await addDoc(collection(db, "User"), {
+    const user = await addDoc(collection(db, "User"), {
         friends: friends,
         mailAddress: mailAddress,
         places: places,
         username: username,
     })
     console.log("add user : " + username);
+    return user
 }
 
 export const setPlace = async (id, address, coordinates, description, name, tags) => {
-    await setDoc(doc(db, "Places", id), {
+    const place = await setDoc(doc(db, "Places", id), {
         address: address,
         coordinates: coordinates,
         description: description,
@@ -121,16 +123,18 @@ export const setPlace = async (id, address, coordinates, description, name, tags
         tags: tags,
     });
     console.log("set place : " + id);
+    return place
 }
 
 export const setUser = async (id, username, mailAddress, friends = [], places = []) => {
-    await setDoc(doc(db, "User", id), {
+    const user = await setDoc(doc(db, "User", id), {
         friends: friends,
         mailAddress: mailAddress,
         places: places,
         username: username,
     });
     console.log("set user : " + id);
+    return user
 }
 
 export const addFriend = async (friendId) => {
@@ -184,9 +188,11 @@ export const getUserPlaces = async (userId = null) => {
     if (user != null) {
       for (const element of user.places) {
         const place = await getPlacesById(element)
-        if (place != null)
-          if (!tabPlace.includes(place))
+        if (place != null) {
+          const found = tabPlace.find(p => p.id === place.id)
+          if (!found)
             tabPlace.push(place)
+        }
       }
     }
     return tabPlace;
