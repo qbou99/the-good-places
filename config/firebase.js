@@ -100,7 +100,8 @@ export const addPlace = async (address, coordinates, description, name, tags) =>
         places: places,
     });
     console.log("add place : " + name);
-    return place;
+    const docSnap = await getDoc(place);
+    return {id: docSnap.id, ...docSnap.data()};
 }
 
 export const addUser = async (username, mailAddress, friends = [], places = []) => {
@@ -111,7 +112,8 @@ export const addUser = async (username, mailAddress, friends = [], places = []) 
         username: username,
     })
     console.log("add user : " + username);
-    return user
+    const docSnap = await getDoc(user);
+    return {id: docSnap.id, ...docSnap.data()};
 }
 
 export const setPlace = async (id, address, coordinates, description, name, tags) => {
@@ -123,7 +125,8 @@ export const setPlace = async (id, address, coordinates, description, name, tags
         tags: tags,
     });
     console.log("set place : " + id);
-    return place
+    const docSnap = await getDoc(place);
+    return {id: docSnap.id, ...docSnap.data()};
 }
 
 export const setUser = async (id, username, mailAddress, friends = [], places = []) => {
@@ -134,7 +137,8 @@ export const setUser = async (id, username, mailAddress, friends = [], places = 
         username: username,
     });
     console.log("set user : " + id);
-    return user
+    const docSnap = await getDoc(user);
+    return {id: docSnap.id, ...docSnap.data()};
 }
 
 export const addFriend = async (friendId) => {
