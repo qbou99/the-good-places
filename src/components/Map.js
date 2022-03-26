@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, Dimensions, Image } from "react-native";
 import { Spinner } from "@ui-kitten/components";
 import { connect } from "react-redux";
@@ -6,31 +6,31 @@ import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
-import { getPlaces } from "../../config/firebase";
+import { getUserPlaces } from "../../config/firebase";
 import DisplayError from "./DisplayError";
 
-const Map = ({ navigation, visiblePlaces, dispatch }) => {
+const Map = ({ navigation, visiblePlaces, dispatch, centerCoords, places }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isError, setIsError] = useState(false);
   const [location, setLocation] = useState(null);
-  const [places, setPlaces] = useState([]);
+  const mapRef = useRef(null);
 
   const navigateToRestaurantDetails = (restaurantID) => {
     navigation.navigate("ViewRestaurant", { restaurantID });
   };
 
   const addVisiblePlace = async (place) => {
-    const found = visiblePlaces.find((p) => (p.id === place.id));
+    const found = visiblePlaces?.find((p) => p.id === place.id);
     if (!found) {
-      const action = { type: "ADD_PLACE", value: place };
+      const action = { type: "ADD_VISIBLE_PLACE", value: place };
       dispatch(action);
     }
   };
 
   const removeVisiblePlace = async (place) => {
-    const found = visiblePlaces.find((p) => (p.id === place.id));
+    const found = visiblePlaces?.find((p) => p.id === place.id);
     if (found) {
-      const action = { type: "REMOVE_PLACE", value: place };
+      const action = { type: "REMOVE_VISIBLE_PLACE", value: place };
       dispatch(action);
     }
   };
@@ -49,10 +49,29 @@ const Map = ({ navigation, visiblePlaces, dispatch }) => {
       console.log(JSON.stringify(location));
       setLocation(location);
 
-      setPlaces(await getPlaces());
+      const res = await getUserPlaces()
+      const action = { type: "SET_PLACES", value: res };
+      dispatch(action);
       onRegionChange(location.coords);
     })();
   }, []);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      const camera = {
+        center: centerCoords,
+        //pitch: number,
+        //heading: number,
+
+        // Only on iOS MapKit, in meters. The property is ignored by Google Maps.
+        //altitude: number,
+
+        // Only when using Google Maps.
+        //zoom: number
+      };
+      mapRef.current.animateCamera(camera);
+    }
+  }, [centerCoords]);
 
   const onRegionChange = (region) => {
     const coordsVisible = getBoundByRegion(region);
@@ -84,6 +103,7 @@ const Map = ({ navigation, visiblePlaces, dispatch }) => {
         </View>
       ) : (
         <MapView
+          ref={mapRef}
           showsPointsOfInterest={false}
           initialRegion={{
             latitude: location.coords.latitude,
@@ -94,12 +114,14 @@ const Map = ({ navigation, visiblePlaces, dispatch }) => {
           style={styles.map}
           customMapStyle={customMapStyle}
           onRegionChange={onRegionChange}
+          showsUserLocation={true}
         >
           {places?.map((element, i) => {
             return <Marker coordinate={element.coordinates} key={element.id} />;
           })}
-          <Image style={styles.target}
-            source={require('../../assets/target.png')}
+          <Image
+            style={styles.target}
+            source={require("../../assets/target.png")}
           />
         </MapView>
       )}
@@ -109,7 +131,9 @@ const Map = ({ navigation, visiblePlaces, dispatch }) => {
 
 const mapStateToProps = (state) => {
   return {
-    visiblePlaces: state.places,
+    visiblePlaces: state.visiblePlaces.visiblePlaces,
+    centerCoords: state.centerCoords.centerCoords,
+    places: state.places.places,
   };
 };
 
@@ -130,8 +154,8 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height - 450,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   target: {
     zIndex: 100,

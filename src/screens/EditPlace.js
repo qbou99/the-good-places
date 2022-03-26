@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input, Select, SelectItem, Button, Modal, Card, Text, List, ListItem } from '@ui-kitten/components';
+import { connect } from "react-redux";
 
 import { forward, reverse } from '../api/positionstack'
 import { addPlace } from '../../config/firebase'
 
-const EditPlace = ( {navigation} ) => {
+const EditPlace = ( {navigation, dispatch} ) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [address, setAddress] = useState('');
@@ -55,7 +56,10 @@ const EditPlace = ( {navigation} ) => {
                         const reverseData = await reverse(place.latitude, place.longitude);
                         place = reverseData.data.find(p => p.type === "address");
                     }
-                    await addPlace(place.label, {latitude: place.latitude, longitude: place.longitude}, description, name, [{name:"local-pizza", pack:"material"}])
+                    const result = await addPlace(place.label, {latitude: place.latitude, longitude: place.longitude}, description, name, [{name:"local-pizza", pack:"material"}])
+                    const action = { type: "ADD_PLACE", value: result };
+                    console.log(result)
+                    dispatch(action);
                     navigation.goBack()
                 } else
                     setVisible(true);
@@ -84,7 +88,15 @@ const EditPlace = ( {navigation} ) => {
     );
 };
 
-export default EditPlace;
+const mapStateToProps = (state) => {
+    return {
+      visiblePlaces: state.visiblePlaces.visiblePlaces,
+      centerCoords: state.centerCoords.centerCoords,
+      places: state.places.places,
+    };
+  };
+
+export default connect(mapStateToProps)(EditPlace);
 
 const styles = StyleSheet.create({
     backdrop: {

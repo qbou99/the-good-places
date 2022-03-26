@@ -1,18 +1,18 @@
-const initialState = { places: [] }
+const initialState = { visiblePlaces: [] }
 
 function visiblePlaces(state = initialState, action) {
   let nextState
   switch (action.type) {
-    case 'ADD_PLACE':
+    case 'ADD_VISIBLE_PLACE':
       nextState = {
         ...state,
-        places: [...state.places, action.value]
+        visiblePlaces: [...state.visiblePlaces, action.value]
       };
       return nextState || state
-    case 'REMOVE_PLACE':
+    case 'REMOVE_VISIBLE_PLACE':
       nextState = {
         ...state,
-        places: state.places.filter(p => p.id !== action.value.id)
+        visiblePlaces: state.visiblePlaces.filter(p => p.id !== action.value.id)
       };
       return nextState || state
     default:

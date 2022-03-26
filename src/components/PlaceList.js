@@ -8,24 +8,18 @@ import PlaceListItem from './PlaceListItem';
 
 const PlaceList = ({ onClick, visiblePlaces, dispatch, navigation }) => {
   const [isRefreshing, setRefreshing] = useState(false);
-  const [places, setPlaces] = useState([]);
   const [userId, setUserId] = useState('userId');
 
   useEffect(() => {
     (async () => {
       setUserId(await getUserId());
-      console.log(userId)
-
-      await searchPlaces()
     })();
   }, []);
 
-  const searchPlaces = async () => {
-    setRefreshing(true)
-    const res = await getUserPlaces(userId)
-    setPlaces(res);
-    setRefreshing(false)
-  };
+  const centerCoords = (coords) => {
+    const action = { type: "CENTER_MAP", value: coords };
+    dispatch(action);
+  }
 
   return (
     <>
@@ -36,10 +30,10 @@ const PlaceList = ({ onClick, visiblePlaces, dispatch, navigation }) => {
           <PlaceListItem
             place={item}
             navigation={navigation}
+            centerOnPlace={()=>centerCoords(item.coordinates)}
           />
         }
         refreshing={isRefreshing}
-        onRefresh={searchPlaces}
       />
     </>
   );
@@ -48,7 +42,9 @@ const PlaceList = ({ onClick, visiblePlaces, dispatch, navigation }) => {
 
 const mapStateToProps = (state) => {
   return {
-    visiblePlaces: state.places,
+    visiblePlaces: state.visiblePlaces.visiblePlaces,
+    centerCoords: state.centerCoords.centerCoords,
+    places: state.places.places,
   };
 };
 

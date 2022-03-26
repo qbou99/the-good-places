@@ -6,7 +6,7 @@ import { Icon } from '@ui-kitten/components';
 import { getPlacesById } from '../../config/firebase';
 import TagsList from './TagsList';
 
-const PlaceListItem = ({ place, navigation }) => {
+const PlaceListItem = ({ place, navigation, centerOnPlace }) => {
 
   const [placeData, setPlaceData] = useState([]);
 
@@ -26,15 +26,13 @@ const PlaceListItem = ({ place, navigation }) => {
       </View>
     </TouchableOpacity>
   );
-
 };
 
 export default PlaceListItem;
 
 const styles = StyleSheet.create({
-
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingVertical: 8,
     borderBottomWidth: 2,
     borderColor: '#e6e6e6',
@@ -42,11 +40,11 @@ const styles = StyleSheet.create({
   informationContainer: {
     flex: 1,
     marginLeft: 12,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   city: {
     fontSize: 20,
@@ -54,8 +52,8 @@ const styles = StyleSheet.create({
   iconContainer: {
     flex: 1,
     marginHorizontal: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   icon: {
     marginLeft: 4,

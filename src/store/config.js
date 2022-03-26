@@ -1,15 +1,13 @@
-import { createStore } from 'redux';
-import { persistStore, persistReducer } from 'redux-persist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createStore, combineReducers } from 'redux';
 
 import visiblePlacesReducer from './reducers/visiblePlaces';
+import centerCoordsReducer from './reducers/centerCoords'
+import placesReducer from './reducers/places'
 
-const configPersist = {
-  key: 'root',
-  storage: AsyncStorage,
-};
-
-const reducerPersist = persistReducer(configPersist, visiblePlacesReducer);
+const reducerPersist = combineReducers({
+  visiblePlaces: visiblePlacesReducer,
+  centerCoords: centerCoordsReducer,
+  places: placesReducer,
+});
 
 export const Store = createStore(reducerPersist);
-export const Persistor = persistStore(Store);
