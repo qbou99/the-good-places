@@ -36,6 +36,7 @@ const PlaceList = ({ onClick, visiblePlaces, dispatch, navigation }) => {
           <PlaceListItem
             place={item}
             navigation={navigation}
+            map={true}
           />
         }
         refreshing={isRefreshing}
