@@ -73,8 +73,9 @@ const Search = ({ navigation }) => {
     (async () => {
       setUserId(await getUserId());
 
-      setPlaces(await getUserPlaces());
-      setVisiblePlaces(places);
+      const p = await getUserPlaces();
+      setPlaces(p);
+      setVisiblePlaces(p);
 
       const loc = await Location.getCurrentPositionAsync({});
       let addr = "";
