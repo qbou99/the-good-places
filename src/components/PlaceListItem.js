@@ -1,55 +1,68 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
-import { Text } from '@ui-kitten/components'
-import { Icon } from '@ui-kitten/components';
-import Toast from 'react-native-root-toast';
+import { Text } from "@ui-kitten/components";
+import { Icon } from "@ui-kitten/components";
+import Toast from "react-native-root-toast";
 
-import { setUser, getUserById, getUserId, getPlacesById } from '../../config/firebase';
-import TagsList from './TagsList';
+import { copyPlace } from "../../config/firebase";
+import TagsList from "./TagsList";
 
-const PlaceListItem = ({ place, navigation, centerOnPlace, map, dispatch }) => {
-
+const PlaceListItem = ({
+  place,
+  navigation,
+  centerOnPlace,
+  map,
+  dispatch,
+  places,
+}) => {
   function navigateToPlaceDetails() {
-    return navigation.navigate("ViewPlaceDetails", { placeData: place });
+    return navigation.navigate("Modal", {
+      screen: "ViewPlaceDetails",
+      params: {
+        placeData: place,
+        ownPlace: map
+      }
+    });
   }
 
-  const copyPlace = async () => {
-    const userId = await getUserId();
-    if (userId != null) {
-      const user = await getUserById(userId)
-      if (user != null) {
-        console.log(user)
-        if (!user.places.includes(place.id)) {
-          const res = await getPlacesById(place.id)
-          const action = { type: "ADD_PLACE", value: res };
-          dispatch(action);
+  const copyUserPlace = async () => {
+    const res = await copyPlace(place, places);
+    if (res) {
+      const action = { type: "ADD_PLACE", value: res };
+      dispatch(action);
 
-          await setUser(userId, user.username, user.mailAddress, user.friends, [...user.places, place.id], [...user.cities, res.city])
-
-          Toast.show('Lieux copié', {
-            duration: Toast.durations.LONG,
-          });
-
-        } else {
-          Toast.show('Vous avez déjà ce lieu', {
-            duration: Toast.durations.LONG,
-          });
-        }
-      }
+      Toast.show("Lieux copié", {
+        duration: Toast.durations.LONG,
+      });
+    } else {
+      Toast.show("Vous avez déjà ce lieu", {
+        duration: Toast.durations.LONG,
+      });
     }
   };
-
 
   return (
     <TouchableOpacity style={styles.container} onPress={navigateToPlaceDetails}>
       <View style={styles.informationContainer}>
         <Text style={styles.title}>{place.name}</Text>
-        <Text style={styles.city}>{place.description.length > 12 ? place.description.substring(0, 12) + "..." : place.description}</Text>
+        <Text style={styles.city}>
+          {place.description.length > 12
+            ? place.description.substring(0, 12) + "..."
+            : place.description}
+        </Text>
       </View>
       <View style={styles.iconContainer}>
         <TagsList tags={place.tags} />
-        {map ? <TouchableOpacity onPress={centerOnPlace}><Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity> : <TouchableOpacity onPress={copyPlace}><Icon name={"copy"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity>}
+        {map ? (
+          <TouchableOpacity onPress={centerOnPlace}>
+            <Icon name={"map-outline"} style={styles.icon} fill="#8F9BB3" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={copyUserPlace}>
+            <Icon name={"copy"} style={styles.icon} fill="#8F9BB3" />
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -68,7 +81,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 8,
     borderBottomWidth: 2,
-    borderColor: '#e6e6e6',
+    borderColor: "#e6e6e6",
   },
   informationContainer: {
     flex: 1,

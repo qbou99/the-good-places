@@ -18,7 +18,6 @@ const FriendList = ({ navigation, onClick, dispatch }) => {
     const searchFriends = async () => {
         setRefreshing(true)
         const res = await getFriends()
-        console.log(res)
         setFriends(res)
         setRefreshing(false)
     };

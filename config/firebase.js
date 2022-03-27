@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc, deleteDoc } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -80,7 +80,7 @@ export const getPlacesById = async (id) => {
     }
 }
 
-export const addPlace = async (address, city, coordinates, description, name, tags) => {
+export const addPlace = async (address, city, coordinates, description, name, tags, originalId = undefined) => {
     const place = await addDoc(collection(db, "Places"), {
         address: address,
         city: city,
@@ -88,6 +88,7 @@ export const addPlace = async (address, city, coordinates, description, name, ta
         description: description,
         name: name,
         tags: tags,
+        originalId: originalId
     })
 
     const id = await getUserId();
@@ -239,19 +240,40 @@ export const getCities = async () => {
 }
 
 export const getSearchPlace = async (search, selectedTag, selectedCityName, selectedDistance) => {
-   console.log("search : " + search);
-   console.log("selectedTag : " + selectedTag);
-   console.log("selectedCityName : " + selectedCityName);
-   console.log("selectedDistance : " + selectedDistance);
+    console.log("search : " + search);
+    console.log("selectedTag : " + selectedTag);
+    console.log("selectedCityName : " + selectedCityName);
+    console.log("selectedDistance : " + selectedDistance);
 
     let tabPlace = [];
 
-    if (selectedTag != null) {
-        const places = await getPlacesByTag(selectedTag);
-        tabPlace = tabPlace.concat(places);
+
+}
+
+export const copyPlace = async (place, places) => {
+    const userId = await getUserId();
+    if (userId != null) {
+        const user = await getUserById(userId)
+        if (user != null) {
+            const originalId = place.originalId || place.id
+            const found = places.find(p => {
+                const pId = p.originalId || p.id
+                return pId === originalId
+            })
+            if (!found) {
+                const res = await addPlace(place.address, place.coordinates, place.description, place.name, place.tags, originalId)
+
+                await setUser(userId, user.username, user.mailAddress, user.friends, [...user.places, res.id])
+
+                return res;
+
+            } else {
+                return null
+            }
+        }
     }
-    if (selectedCityName != null) {
-        const places = await getPlacesByCity(selectedCityName);
-        tabPlace = tabPlace.concat(places);
-    }
+};
+
+export const deletePlace = async (placeId) => {
+    await deleteDoc(doc(db, "Places", placeId));
 }

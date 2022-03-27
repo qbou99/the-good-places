@@ -48,6 +48,7 @@ const EditPlace = ({ navigation, dispatch }) => {
     useEffect(() => {
         (async () => {
             if (displayValue == "Entrer manuellement l'addresse") {
+                setAddress('')
                 setAddressDisabled(false);
             }
             else {
@@ -67,7 +68,6 @@ const EditPlace = ({ navigation, dispatch }) => {
                 setAddress(item.label);
                 setVisible(false);
                 await sendPlace(item.label);
-                console.log(item);
             }}
             style={{ flex: 1 }}
         />
@@ -97,7 +97,6 @@ const EditPlace = ({ navigation, dispatch }) => {
 
     const sendPlace = async (addr) => {
         const res = await forward(addr);
-        //console.log(JSON.stringify(addr))
         setData(res);
         if (addr === res[0].label) {
             let place = res[0];
