@@ -5,7 +5,7 @@ import { Text } from '@ui-kitten/components'
 import { Icon } from '@ui-kitten/components';
 import Toast from 'react-native-root-toast';
 
-import { setUser, getUserById, getUserId } from '../../config/firebase';
+import { setUser, getUserById, getUserId, getPlacesById } from '../../config/firebase';
 import TagsList from './TagsList';
 
 const PlaceListItem = ({ place, navigation, centerOnPlace, map, dispatch }) => {
@@ -14,21 +14,29 @@ const PlaceListItem = ({ place, navigation, centerOnPlace, map, dispatch }) => {
     return navigation.navigate("ViewPlaceDetails", { placeData: place });
   }
 
-  const copiPlace = async () => {
-    const user = await getUserById(await getUserId())
+  const copyPlace = async () => {
+    const userId = await getUserId();
+    if (userId != null) {
+      const user = await getUserById(userId)
+      if (user != null) {
+        console.log(user)
+        if (!user.places.includes(place.id)) {
+          const res = await getPlacesById(place.id)
+          const action = { type: "ADD_PLACE", value: res };
+          dispatch(action);
 
-    console.log(user.places)
-    console.log(place.id)
+          await setUser(userId, user.username, user.mailAddress, user.friends, [...user.places, place.id])
 
-    if (!user.places.includes(place.id)) {
-      await setUser(user.id, user.username, user.mailAddress, user.friends, user.places.concat(place.id))
-      Toast.show('Lieux copié', {
-        duration: Toast.durations.LONG,
-      });
-    } else {
-      Toast.show('Vous avez déjà ce lieu', {
-        duration: Toast.durations.LONG,
-      });
+          Toast.show('Lieux copié', {
+            duration: Toast.durations.LONG,
+          });
+
+        } else {
+          Toast.show('Vous avez déjà ce lieu', {
+            duration: Toast.durations.LONG,
+          });
+        }
+      }
     }
   };
 
@@ -41,7 +49,7 @@ const PlaceListItem = ({ place, navigation, centerOnPlace, map, dispatch }) => {
       </View>
       <View style={styles.iconContainer}>
         <TagsList tags={place.tags} />
-        {map ? <TouchableOpacity onPress={centerOnPlace}><Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity> : <TouchableOpacity onPress={copiPlace}><Icon name={"copy"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity>}
+        {map ? <TouchableOpacity onPress={centerOnPlace}><Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity> : <TouchableOpacity onPress={copyPlace}><Icon name={"copy"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity>}
       </View>
     </TouchableOpacity>
   );

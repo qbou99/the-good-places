@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getUserPlaces } from '../../config/firebase';
 import PlaceListItem from '../components/PlaceListItem';
 
-const FriendDetails = ({ route, navigation }) => {
+const FriendDetails = ({ route, navigation, dispatch }) => {
 
   const { friendData, friendName } = route.params;
 

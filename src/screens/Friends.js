@@ -5,12 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import FriendList from '../components/FriendList';
 
-const Friends = ({ navigation }) => {
+const Friends = ({ navigation, dispatch }) => {
     return (
         <SafeAreaView>
             <Text style={styles.title}>Liste des amis</Text>
 
-            <FriendList navigation={navigation} />
+            <FriendList navigation={navigation} dispatch={dispatch} />
 
             <Button style={styles.button} onPress={() => { navigation.navigate("ViewAddFriend"); }}>Ajouter un ami</Button>
         </SafeAreaView>
