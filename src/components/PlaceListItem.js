@@ -17,9 +17,12 @@ const PlaceListItem = ({
   places,
 }) => {
   function navigateToPlaceDetails() {
-    return navigation.navigate("ViewPlaceDetails", {
-      placeData: place,
-      ownPlace: map,
+    return navigation.navigate("Modal", {
+      screen: "ViewPlaceDetails",
+      params: {
+        placeData: place,
+        ownPlace: map
+      }
     });
   }
 

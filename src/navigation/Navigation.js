@@ -24,8 +24,8 @@ const SearchNavigation = createStackNavigator();
 const FriendsNavigation = createStackNavigator();
 const SettingsNavigation = createStackNavigator();
 const TabNavigation = createBottomTabNavigator();
-
 const MainNavigation = createStackNavigator();
+const ModalNavigation = createStackNavigator();
 
 function MapStackScreens() {
   return (
@@ -39,11 +39,6 @@ function MapStackScreens() {
         name="ViewHome"
         component={Home}
         options={{ title: "Map" }}
-      />
-      <MapNavigation.Screen
-        name="ViewPlaceDetails"
-        component={PlaceDetails}
-        options={{ title: "Détails" }}
       />
       <MapNavigation.Screen
         name="ViewEditPlace"
@@ -66,11 +61,6 @@ function SearchStackScreens() {
         name="ViewSearch"
         component={Search}
         options={{ title: "Chercher" }}
-      />
-      <SearchNavigation.Screen
-        name="ViewPlaceDetails"
-        component={PlaceDetails}
-        options={{ title: "Détails" }}
       />
     </SearchNavigation.Navigator>
   );
@@ -144,6 +134,31 @@ const BottomTabBar = ({ navigation, state }) => (
   </BottomNavigation>
 );
 
+function MainStack() {
+  return <TabNavigation.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      tabBar={BottomTabBar}
+    >
+      <TabNavigation.Screen name="Map" component={MapStackScreens} />
+      <TabNavigation.Screen name="Chercher" component={SearchStackScreens} />
+      <TabNavigation.Screen name="Amis" component={FriendsStackScreens} />
+      <TabNavigation.Screen name="Paramètres" component={SettingsStackScreens} />
+    </TabNavigation.Navigator>
+}
+
+function ModalStack() {
+  return <ModalNavigation.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      mode={"modal"}
+    >
+      <ModalNavigation.Screen name="ViewPlaceDetails" component={PlaceDetails} />
+    </ModalNavigation.Navigator>
+}
+
 function RootStack({ isSignedIn }) {
   return !isSignedIn ? (
     <MainNavigation.Navigator
@@ -159,17 +174,20 @@ function RootStack({ isSignedIn }) {
       />
     </MainNavigation.Navigator>
   ) : (
-    <TabNavigation.Navigator
+    <MainNavigation.Navigator
       screenOptions={{
         headerShown: false,
       }}
-      tabBar={BottomTabBar}
     >
-      <TabNavigation.Screen name="Map" component={MapStackScreens} />
-      <TabNavigation.Screen name="Chercher" component={SearchStackScreens} />
-      <TabNavigation.Screen name="Amis" component={FriendsStackScreens} />
-      <TabNavigation.Screen name="Paramètres" component={SettingsStackScreens} />
-    </TabNavigation.Navigator>
+      <MainNavigation.Screen
+        name="Main"
+        component={MainStack}
+      />
+      <MainNavigation.Screen
+        name="Modal"
+        component={ModalStack}
+      />
+    </MainNavigation.Navigator>
   );
 }
 
