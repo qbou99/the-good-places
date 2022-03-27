@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input, Button, Text } from '@ui-kitten/components';
 import Toast from 'react-native-root-toast';
 import SvgQRCode from 'react-native-qrcode-svg';
+import * as Clipboard from 'expo-clipboard';
 
 import { addFriend, getUserId } from '../../config/firebase'
 
@@ -59,6 +60,14 @@ const AddFriend = ({ navigation }) => {
 
                     <Button style={styles.button} onPress={() => { navigation.navigate("ViewScanQrCode"); }}>
                         Scanner un QRCode
+                    </Button>
+                    <Button style={styles.button} onPress={() => {
+                        Clipboard.setString(userId);
+                        Toast.show('ID Copié', {
+                            duration: Toast.durations.LONG,
+                        });
+                    }}>
+                        Copié mon ID
                     </Button>
                 </KeyboardAvoidingView>
             </ScrollView>
