@@ -29,7 +29,7 @@ const Search = ({ navigation }) => {
       style={styles.container}
     >
         <KeyboardAvoidingView style={styles.container2} behavior="padding">
-          <Text style={styles.title}>Rechercher un lieu</Text>
+          <Text style={styles.title}>Rechercher dans mes lieux</Text>
           <Input
             placeholder='Recherche'
             value={search}
