@@ -143,8 +143,8 @@ export const setPlace = async (id, address, city, coordinates, description, name
     });
     console.log("set place : " + id);
     try {
-        const docSnap = await getDoc(place);
-        return { id: docSnap.id, ...docSnap.data() };
+        
+        return await getPlacesById(id);
     } catch (error) {
         return null;
     }
