@@ -20,7 +20,6 @@ export default function ScanQrCode({ navigation }) {
     const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
         setFriendId(data);
-        alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     };
 
     if (hasPermission === null) {
@@ -32,11 +31,12 @@ export default function ScanQrCode({ navigation }) {
 
     return (
         <View style={styles.container}>
+            {!scanned ?
             <BarCodeScanner
                 onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                 style={StyleSheet.absoluteFillObject}
-            />
-            {scanned ?
+            /> :
+            
                 <View>
                     <Button style={styles.button} title={'Réessayer'} onPress={() => setScanned(false)} />
                     <Button style={styles.button} title={'Ajouter l\'ami'} onPress={async () => {
@@ -53,10 +53,6 @@ export default function ScanQrCode({ navigation }) {
                         }
                     }}>
                     </Button>
-                </View>
-                :
-                <View style={styles.container}>
-                    
                 </View>
             }
         </View>
