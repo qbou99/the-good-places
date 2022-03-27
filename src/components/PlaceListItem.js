@@ -5,10 +5,10 @@ import { Text } from '@ui-kitten/components'
 import { Icon } from '@ui-kitten/components';
 import Toast from 'react-native-root-toast';
 
-import { setUser, getUserById, getUserId, getPlacesById } from '../../config/firebase';
+import { setUser, getUserById, getUserId, addPlace } from '../../config/firebase';
 import TagsList from './TagsList';
 
-const PlaceListItem = ({ place, navigation, centerOnPlace, map, dispatch }) => {
+const PlaceListItem = ({ place, navigation, centerOnPlace, map, dispatch, places }) => {
 
   function navigateToPlaceDetails() {
     return navigation.navigate("ViewPlaceDetails", { placeData: place });
@@ -20,8 +20,13 @@ const PlaceListItem = ({ place, navigation, centerOnPlace, map, dispatch }) => {
       const user = await getUserById(userId)
       if (user != null) {
         console.log(user)
-        if (!user.places.includes(place.id)) {
-          const res = await getPlacesById(place.id)
+        const originalId = place.originalId || place.id
+        const found = places.find(p => {
+          const pId = p.originalId || p.id
+          return pId === originalId
+        })
+        if (!found) {
+          const res = await addPlace(place.address, place.coordinates, place.description, place.name, place.tags, originalId)
           const action = { type: "ADD_PLACE", value: res };
           dispatch(action);
 

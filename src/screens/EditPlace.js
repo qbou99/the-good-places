@@ -47,6 +47,7 @@ const EditPlace = ({ navigation, dispatch }) => {
     useEffect(() => {
         (async () => {
             if (displayValue == "Entrer manuellement l'addresse") {
+                setAddress('')
                 setAddressDisabled(false);
             }
             else {

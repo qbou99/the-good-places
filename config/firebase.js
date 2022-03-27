@@ -80,13 +80,14 @@ export const getPlacesById = async (id) => {
     }
 }
 
-export const addPlace = async (address, coordinates, description, name, tags) => {
+export const addPlace = async (address, coordinates, description, name, tags, originalId = undefined) => {
     const place = await addDoc(collection(db, "Places"), {
         address: address,
         coordinates: coordinates,
         description: description,
         name: name,
         tags: tags,
+        originalId: originalId
     })
 
     const id = await getUserId();
