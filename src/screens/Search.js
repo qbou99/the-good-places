@@ -9,6 +9,7 @@ import categories from "../helpers/categories";
 import { getUserId, getCities, getUserPlaces } from '../../config/firebase'
 import PlaceListItem from '../components/PlaceListItem';
 import TagsIcon from '../components/TagsIcon';
+import categoriesList from '../helpers/categories';
 
 const Search = ({ navigation }) => {
   const [userId, setUserId] = useState('userId');
@@ -64,14 +65,20 @@ const Search = ({ navigation }) => {
     }
     setSearchLocation(!searchLocation);
 
-    searchPlaces();
+    //searchPlaces();
 
   }
 
 
   useEffect(() => {
     (async () => {
+      setRefreshing(true)
       setUserId(await getUserId());
+
+      const cities = await getCities()
+      setUserCities(cities);
+
+      setSelectedCityName(cities[0])
 
       const p = await getUserPlaces();
       setPlaces(p);
@@ -86,29 +93,24 @@ const Search = ({ navigation }) => {
 
       }
 
-      setUserCities(await getCities());
-
-      setSelectedCityName(userCities[0])
-
+      setRefreshing(false)
 
     })();
   }, []);
 
-  const searchPlaces = async (searchP, selectedTagP, selectedCityNameP, selectedDistanceP) => {
-    setRefreshing(true)
-
-    /*console.log("search : " + searchP);
-    console.log("selectedTag : " + selectedTagP);
-    console.log("selectedCityName : " + selectedCityNameP);
-    console.log("selectedDistance : " + selectedDistanceP);
-
-*/
-
-    //setVisiblePlaces(p);
-
-    setRefreshing(false)
-  }
-
+  useEffect(() => {
+    (async () => {
+      console.log(selectedTagContent)
+      let pl = places.filter(p => {
+        selectedTag.forEach(t => {
+          
+        })
+        return p.name.toLowerCase().includes(search.toLowerCase()) && true
+          p.tags.find(t => t.name === "cate")
+      })
+      setVisiblePlaces(pl)
+    })();
+  }, [search, selectedTag, selectedCityName, selectedDistance]);
   
   return (
     <SafeAreaView
