@@ -152,8 +152,8 @@ function ModalStack() {
   return <ModalNavigation.Navigator
       screenOptions={{
         headerShown: false,
+        presentation: "modal"
       }}
-      mode={"modal"}
     >
       <ModalNavigation.Screen name="ViewPlaceDetails" component={PlaceDetails} />
     </ModalNavigation.Navigator>
