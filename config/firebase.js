@@ -239,17 +239,6 @@ export const getCities = async () => {
         return null;
 }
 
-export const getSearchPlace = async (search, selectedTag, selectedCityName, selectedDistance) => {
-    console.log("search : " + search);
-    console.log("selectedTag : " + selectedTag);
-    console.log("selectedCityName : " + selectedCityName);
-    console.log("selectedDistance : " + selectedDistance);
-
-    let tabPlace = [];
-
-
-}
-
 export const copyPlace = async (place, places) => {
     const userId = await getUserId();
     if (userId != null) {

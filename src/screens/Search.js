@@ -6,7 +6,7 @@ import * as Location from "expo-location";
 
 import { forward, reverse } from "../api/positionstack";
 import categories from "../helpers/categories";
-import { getUserId, getCities, getSearchPlace } from '../../config/firebase'
+import { getUserId, getCities, getUserPlaces } from '../../config/firebase'
 import PlaceListItem from '../components/PlaceListItem';
 import TagsIcon from '../components/TagsIcon';
 
@@ -15,6 +15,7 @@ const Search = ({ navigation }) => {
   const [isRefreshing, setRefreshing] = useState(false);
 
   const [places, setPlaces] = useState([]);
+  const [visiblePlaces, setVisiblePlaces] = useState([]);
 
   const [search, setSearch] = useState('');
   const [selectedTag, setSelectedTag] = useState([]);
@@ -25,7 +26,6 @@ const Search = ({ navigation }) => {
   const [locationCity, setLocationCity] = useState('');
   const [selectedDistance, setSelectedDistance] = useState('');
   const [searchLocation, setSearchLocation] = useState(false);
-
 
   const selectedTagContent = [
     'Bar',
@@ -73,6 +73,9 @@ const Search = ({ navigation }) => {
     (async () => {
       setUserId(await getUserId());
 
+      setPlaces(await getUserPlaces());
+      setVisiblePlaces(places);
+
       const loc = await Location.getCurrentPositionAsync({});
       let addr = "";
       if (loc) {
@@ -90,16 +93,22 @@ const Search = ({ navigation }) => {
     })();
   }, []);
 
-  const searchPlaces = async () => {
+  const searchPlaces = async (searchP, selectedTagP, selectedCityNameP, selectedDistanceP) => {
     setRefreshing(true)
-    console.log(selectedCityName);
-    const p = await getSearchPlace(search, selectedTag, selectedCityName, selectedDistance);
 
-    setPlaces(p);
+    /*console.log("search : " + searchP);
+    console.log("selectedTag : " + selectedTagP);
+    console.log("selectedCityName : " + selectedCityNameP);
+    console.log("selectedDistance : " + selectedDistanceP);
+
+*/
+
+    //setVisiblePlaces(p);
 
     setRefreshing(false)
   }
 
+  
   return (
     <SafeAreaView
       style={styles.container}
@@ -111,7 +120,7 @@ const Search = ({ navigation }) => {
           value={search}
           onChangeText={nextValue => setSearch(nextValue)}
           style={styles.textInput}
-          onContentSizeChange={() => searchPlaces()}
+          //onContentSizeChange={() => searchPlaces(search, selectedTag, selectedCityName, selectedDistance)}
         />
 
         <Select
@@ -120,7 +129,7 @@ const Search = ({ navigation }) => {
           onSelect={
             function onSelect(index) {
               setSelectedTag(index);
-              searchPlaces()
+              //searchPlaces(search, selectedTag, selectedCityName, selectedDistance)
             }
           }
           style={styles.select}
@@ -139,7 +148,7 @@ const Search = ({ navigation }) => {
               function onSelect(index) {
                 setSelectedCity(index);
                 setSelectedCityName(userCities[index.row])
-                searchPlaces()
+                //searchPlaces(search, selectedTag, selectedCityName, selectedDistance)
               }
             }
             style={styles.selectedCity}
@@ -156,7 +165,7 @@ const Search = ({ navigation }) => {
             onSelect={
               function onSelect(index) {
                 setSelectedDistance(index);
-                searchPlaces()
+                //searchPlaces(search, selectedTag, selectedCityName, selectedDistance)
               }
             }
             style={styles.selectedDistance}
@@ -166,10 +175,12 @@ const Search = ({ navigation }) => {
             {distanceContent.map(renderOption)}
           </Select>
         </View>
+        <Button onPress={() => searchPlaces(search, selectedTag, selectedCityName, selectedDistance)}>Chercher</Button>
+
       </KeyboardAvoidingView>
       <View style={styles.containerList}>
         <List
-          data={places}
+          data={visiblePlaces}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) =>
             <PlaceListItem
@@ -179,7 +190,7 @@ const Search = ({ navigation }) => {
             />
           }
           refreshing={isRefreshing}
-          onRefresh={searchPlaces}
+          //onRefresh={searchPlaces(search, selectedTag, selectedCityName, selectedDistance)}
         />
       </View>
     </SafeAreaView>
