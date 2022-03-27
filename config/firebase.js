@@ -80,9 +80,10 @@ export const getPlacesById = async (id) => {
     }
 }
 
-export const addPlace = async (address, coordinates, description, name, tags) => {
+export const addPlace = async (address, city, coordinates, description, name, tags) => {
     const place = await addDoc(collection(db, "Places"), {
         address: address,
+        city: city,
         coordinates: coordinates,
         description: description,
         name: name,
@@ -95,9 +96,14 @@ export const addPlace = async (address, coordinates, description, name, tags) =>
     let places = user.places || [];
     places.push(place.id);
 
+    let cities = user.cities || [];
+    if (!cities.includes(city))
+        cities.push(city);
+
     await setDoc(doc(db, "User", id), {
         ...user,
         places: places,
+        cities: cities
     });
     console.log("add place : " + name);
     try {
@@ -108,12 +114,13 @@ export const addPlace = async (address, coordinates, description, name, tags) =>
     }
 }
 
-export const addUser = async (username, mailAddress, friends = [], places = []) => {
+export const addUser = async (username, mailAddress, friends = [], places = [], cities = []) => {
     const user = await addDoc(collection(db, "User"), {
         friends: friends,
         mailAddress: mailAddress,
         places: places,
         username: username,
+        cities: cities,
     })
     console.log("add user : " + username);
     try {
@@ -124,9 +131,10 @@ export const addUser = async (username, mailAddress, friends = [], places = []) 
     }
 }
 
-export const setPlace = async (id, address, coordinates, description, name, tags) => {
+export const setPlace = async (id, address, city, coordinates, description, name, tags) => {
     const place = await setDoc(doc(db, "Places", id), {
         address: address,
+        city: city,
         coordinates: coordinates,
         description: description,
         name: name,
@@ -141,12 +149,13 @@ export const setPlace = async (id, address, coordinates, description, name, tags
     }
 }
 
-export const setUser = async (id, username, mailAddress, friends = [], places = []) => {
+export const setUser = async (id, username, mailAddress, friends = [], places = [], cities = []) => {
     const user = await setDoc(doc(db, "User", id), {
         friends: friends,
         mailAddress: mailAddress,
         places: places,
         username: username,
+        cities: cities,
     });
     console.log("set user : " + id);
     try {
@@ -216,4 +225,33 @@ export const getUserPlaces = async (userId = null) => {
         }
     }
     return tabPlace;
+}
+
+export const getCities = async () => {
+    const id = await getUserId();
+
+    let user = await getUserById(id);
+
+    if (user != null)
+        return user.cities;
+    else
+        return null;
+}
+
+export const getSearchPlace = async (search, selectedTag, selectedCityName, selectedDistance) => {
+   console.log("search : " + search);
+   console.log("selectedTag : " + selectedTag);
+   console.log("selectedCityName : " + selectedCityName);
+   console.log("selectedDistance : " + selectedDistance);
+
+    let tabPlace = [];
+
+    if (selectedTag != null) {
+        const places = await getPlacesByTag(selectedTag);
+        tabPlace = tabPlace.concat(places);
+    }
+    if (selectedCityName != null) {
+        const places = await getPlacesByCity(selectedCityName);
+        tabPlace = tabPlace.concat(places);
+    }
 }

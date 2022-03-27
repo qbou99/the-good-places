@@ -35,6 +35,7 @@ const EditPlace = ({ navigation, dispatch }) => {
     const [data, setData] = useState([]);
     const [addressDisabled, setAddressDisabled] = useState(true);
     const [addressLocation, setAddressLocation] = useState('');
+    const [cityLocation, setCityLocation] = useState('');
 
     useEffect(() => {
         (async () => {
@@ -53,6 +54,7 @@ const EditPlace = ({ navigation, dispatch }) => {
                 setAddressDisabled(true);
                 if (addressLocation) {
                     setAddress(addressLocation.data[0].name + ", " + addressLocation.data[0].locality + ", " + addressLocation.data[0].country);
+                    setCityLocation(addressLocation.data[0].locality);
                 }
             }
         })();
@@ -99,8 +101,11 @@ const EditPlace = ({ navigation, dispatch }) => {
         setData(res);
         if (addr === res[0].label) {
             let place = res[0];
+            let city = res[0].locality;
+
             if (place.type === "venue") {
                 const reverseData = await reverse(place.latitude, place.longitude);
+                console.log(reverseData.data[0].locality[0]);
                 place = reverseData.data.find((p) => p.type === "address");
                 if (!place) place = res[0];
             }
@@ -109,9 +114,9 @@ const EditPlace = ({ navigation, dispatch }) => {
                 icon.push(categories[selectedTagContent[element.row]]);
 
             });
-            console.log(icon);
             const result = await addPlace(
                 place.label,
+                city,
                 {
                     latitude: place.latitude,
                     longitude: place.longitude

@@ -25,7 +25,7 @@ const PlaceListItem = ({ place, navigation, centerOnPlace, map, dispatch }) => {
           const action = { type: "ADD_PLACE", value: res };
           dispatch(action);
 
-          await setUser(userId, user.username, user.mailAddress, user.friends, [...user.places, place.id])
+          await setUser(userId, user.username, user.mailAddress, user.friends, [...user.places, place.id], [...user.cities, res.city])
 
           Toast.show('Lieux copié', {
             duration: Toast.durations.LONG,
