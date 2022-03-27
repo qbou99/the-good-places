@@ -12,22 +12,26 @@ import { copyPlace, deletePlace } from "../../config/firebase";
 
 const PlaceDetails = ({ route, dispatch }) => {
   const { placeData, ownPlace } = route.params;
-  const [saved, setSaved] = useState("Sauvegarder")
-  const places = useSelector((state) =>state.places.places);
+  const [savedText, setSavedText] = useState("Sauvegarder");
+  const [saved, setSaved] = useState(false);
+  const places = useSelector((state) => state.places.places);
 
-  useEffect(()=> {
+  useEffect(() => {
     (() => {
-    const originalId = placeData.originalId || placeData.id
-    const found = places.find(p => {
-      const pId = p.originalId || p.id
-      return pId === originalId
-    })
-    if(found)
-      setSaved("Sauvegardé")
-    else
-      setSaved("Sauvegarder")
-  })();
-  }, [places])
+      const originalId = placeData.originalId || placeData.id;
+      const found = places.find((p) => {
+        const pId = p.originalId || p.id;
+        return pId === originalId;
+      });
+      if (found) {
+        setSavedText("Sauvegardé");
+        setSaved(true)
+      } else {
+        setSavedText("Sauvegarder");
+        setSaved(false)
+      }
+    })();
+  }, [places]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -52,38 +56,41 @@ const PlaceDetails = ({ route, dispatch }) => {
         </View>
       </View>
       <View>
-        {(ownPlace ? <Button
-          style={[styles.button, styles.buttonDelete]}
-          onPress={async () => {
-            await deletePlace(placeData.id)
-            Toast.show("Place supprimée", {
-              duration: Toast.durations.LONG,
-            });
-          }}
-        >
-          Supprimer
-        </Button> : <Button
-          style={[styles.button, styles.buttonSave]}
-          disabled={saved}
-          onPress={async () => {
-            const res = await copyPlace(placeData, places);
-            if (res) {
-              const action = { type: "ADD_PLACE", value: res };
-              dispatch(action);
+        {ownPlace ? (
+          <Button
+            style={[styles.button, styles.buttonDelete]}
+            onPress={async () => {
+              await deletePlace(placeData.id);
+              Toast.show("Place supprimée", {
+                duration: Toast.durations.LONG,
+              });
+            }}
+          >
+            Supprimer
+          </Button>
+        ) : (
+          <Button
+            style={[styles.button, saved ? null : styles.buttonSave]}
+            disabled={saved}
+            onPress={async () => {
+              const res = await copyPlace(placeData, places);
+              if (res) {
+                const action = { type: "ADD_PLACE", value: res };
+                dispatch(action);
 
-              Toast.show("Lieux copié", {
-                duration: Toast.durations.LONG,
-              });
-            } else {
-              Toast.show("Vous avez déjà ce lieu", {
-                duration: Toast.durations.LONG,
-              });
-            }
-          }}
-          
-        >
-          {saved}
-        </Button>)}
+                Toast.show("Lieux copié", {
+                  duration: Toast.durations.LONG,
+                });
+              } else {
+                Toast.show("Vous avez déjà ce lieu", {
+                  duration: Toast.durations.LONG,
+                });
+              }
+            }}
+          >
+            {savedText}
+          </Button>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -140,7 +147,7 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: "row",
     margin: 10,
-    
+
     borderRadius: 10,
     height: 45,
   },
@@ -151,5 +158,5 @@ const styles = StyleSheet.create({
   buttonSave: {
     backgroundColor: "#0093fd",
     borderColor: "#0093fd",
-  }
+  },
 });
