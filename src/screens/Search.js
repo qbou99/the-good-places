@@ -21,7 +21,6 @@ const Search = ({ navigation }) => {
   const [search, setSearch] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
   const [userCities, setUserCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState(new IndexPath(0));
   const [selectedCityName, setSelectedCityName] = useState("");
   const [location, setLocation] = useState('');
   const [locationCity, setLocationCity] = useState('');
@@ -39,32 +38,41 @@ const Search = ({ navigation }) => {
 
   const distanceContent = [
     10,
+    20,
     30,
+    40,
+    50,
+    75,
     100,
   ];
 
+  function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1); 
+    var a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ; 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c; // Distance in km
+    return d;
+  }
+  
+  function deg2rad(deg) {
+    return deg * (Math.PI/180)
+  }
+  
   const renderOption = (title) => <SelectItem title={title} key={title} />;
 
-  const displayCity = userCities[selectedCity.row];
-
-  const displayDistance = distanceContent[selectedDistance.row];
-
-  const displayTag = selectedTagContent[selectedTag.row];
-
-
   const toogleLocation = () => {
-
 
     if (searchLocation) {
       setSelectedCityName(locationCity)
     }
-    else {
-      setSelectedCity(new IndexPath(0))
-      setSelectedCityName(userCities[0])
-    }
+    
     setSearchLocation(!searchLocation);
-
-    //searchPlaces();
 
   }
 
@@ -76,8 +84,6 @@ const Search = ({ navigation }) => {
 
       const cities = await getCities()
       setUserCities(cities);
-
-      setSelectedCityName(cities[0])
 
       const p = await getUserPlaces();
       setPlaces(p);
@@ -99,11 +105,27 @@ const Search = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      console.log(selectedTagContent)
-      let pl = places.filter(p => {
-      
-        return p.name.toLowerCase().includes(search.toLowerCase()) && true
-          p.tags.find(t => t.name === "cate")
+      let coords
+      if(selectedCityName != '' && selectedDistance != ''){
+        const res = await forward(selectedCityName);
+        coords = {
+          latitude: res[0].latitude,
+          longitude: res[0].longitude
+        }
+        console.log(coords)
+      }
+      let pl = places.filter((p) => {
+        let condTag = true
+        if(selectedTag != ''){
+          condTag = p.tags.find(t => categoriesList[selectedTag].name === t.name)
+        }
+        let condDistance = true
+        if(selectedCityName != '' && selectedDistance != ''){
+          const distance = getDistanceFromLatLonInKm(coords.latitude, coords.longitude, p.coordinates.latitude, p.coordinates.longitude)
+          condDistance = distance <= parseInt(selectedDistance)
+        }
+          
+        return p.name.toLowerCase().includes(search.toLowerCase()) && condTag && condDistance
       })
       setVisiblePlaces(pl)
     })();
@@ -120,21 +142,18 @@ const Search = ({ navigation }) => {
           value={search}
           onChangeText={nextValue => setSearch(nextValue)}
           style={styles.textInput}
-          //onContentSizeChange={() => searchPlaces(search, selectedTag, selectedCityName, selectedDistance)}
         />
 
         <Select
           multiSelect={false}
-          selectedIndex={selectedTag}
           onSelect={
             function onSelect(index) {
-              setSelectedTag(index);
-              //searchPlaces(search, selectedTag, selectedCityName, selectedDistance)
+              setSelectedTag(selectedTagContent[index.row]);
             }
           }
           style={styles.select}
           placeholder="Choisir des tags"
-          value={displayTag}
+          value={selectedTag}
         >
           {selectedTagContent.map(renderOption)}
         </Select>
@@ -143,17 +162,14 @@ const Search = ({ navigation }) => {
           <TouchableOpacity onPress={toogleLocation}>{searchLocation ? <TagsIcon name="my-location" pack="material" /> : <TagsIcon name="location-searching" pack="material" />}</TouchableOpacity>
           {searchLocation ? <Text>Ma location</Text> : <Select
             multiSelect={false}
-            selectedIndex={selectedCity}
             onSelect={
               function onSelect(index) {
-                setSelectedCity(index);
                 setSelectedCityName(userCities[index.row])
-                //searchPlaces(search, selectedTag, selectedCityName, selectedDistance)
               }
             }
             style={styles.selectedCity}
             placeholder="Choisir une ville"
-            value={displayCity}
+            value={selectedCityName}
             disabled={searchLocation}
           >
             {userCities.map(renderOption)}
@@ -161,21 +177,18 @@ const Search = ({ navigation }) => {
           }
           <Select
             multiSelect={false}
-            selectedIndex={selectedDistance}
             onSelect={
               function onSelect(index) {
-                setSelectedDistance(index);
-                //searchPlaces(search, selectedTag, selectedCityName, selectedDistance)
+                setSelectedDistance(distanceContent[index.row]);
               }
             }
             style={styles.selectedDistance}
             placeholder="Choisir une distance"
-            value={displayDistance}
+            value={selectedDistance}
           >
             {distanceContent.map(renderOption)}
           </Select>
         </View>
-        <Button onPress={() => searchPlaces(search, selectedTag, selectedCityName, selectedDistance)}>Chercher</Button>
 
       </KeyboardAvoidingView>
       <View style={styles.containerList}>
@@ -191,7 +204,6 @@ const Search = ({ navigation }) => {
             />
           }
           refreshing={isRefreshing}
-          //onRefresh={searchPlaces(search, selectedTag, selectedCityName, selectedDistance)}
         />
       </View>
     </SafeAreaView>
