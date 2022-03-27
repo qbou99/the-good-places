@@ -187,6 +187,7 @@ const Search = ({ navigation }) => {
               place={item}
               navigation={navigation}
               map={false}
+              search={true}
             />
           }
           refreshing={isRefreshing}

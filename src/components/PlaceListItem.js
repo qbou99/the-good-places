@@ -15,6 +15,7 @@ const PlaceListItem = ({
   map,
   dispatch,
   places,
+  search,
 }) => {
   function navigateToPlaceDetails() {
     return navigation.navigate("Modal", {
@@ -54,14 +55,18 @@ const PlaceListItem = ({
       </View>
       <View style={styles.iconContainer}>
         <TagsList tags={place.tags} />
-        {map ? (
-          <TouchableOpacity onPress={centerOnPlace}>
-            <Icon name={"map-outline"} style={styles.icon} fill="#8F9BB3" />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={copyUserPlace}>
-            <Icon name={"copy"} style={styles.icon} fill="#8F9BB3" />
-          </TouchableOpacity>
+        {search ? <></> : (
+          <View>
+            {map ? (
+              <TouchableOpacity onPress={centerOnPlace}>
+                <Icon name={"map-outline"} style={styles.icon} fill="#8F9BB3" />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={copyUserPlace}>
+                <Icon name={"copy"} style={styles.icon} fill="#8F9BB3" />
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       </View>
     </TouchableOpacity>
