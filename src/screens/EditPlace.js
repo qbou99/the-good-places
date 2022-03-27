@@ -1,66 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView, KeyboardAvoidingView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Input, Select, SelectItem, Button, Modal, Card, Text, List, ListItem, IndexPath } from '@ui-kitten/components';
+import React, { useState, useEffect } from "react";
+import {
+    View,
+    StyleSheet,
+    Dimensions,
+    ScrollView,
+    KeyboardAvoidingView,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import {
+    Input,
+    Select,
+    SelectItem,
+    Button,
+    Modal,
+    Card,
+    Text,
+    List,
+    ListItem,
+    IndexPath,
+} from "@ui-kitten/components";
 import { connect } from "react-redux";
 import * as Location from "expo-location";
-import { forward, reverse } from '../api/positionstack'
-
-import { addPlace } from '../../config/firebase'
+import { forward, reverse } from "../api/positionstack";
+import { addPlace } from "../../config/firebase";
+import categories from "../helpers/categories";
 
 const EditPlace = ({ navigation, dispatch }) => {
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [address, setAddress] = useState('');
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [address, setAddress] = useState("");
     const [selectedTag, setSelectedTag] = useState([]);
     const [selectedMethod, setSelectedMethod] = useState(new IndexPath(0));
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState([]);
     const [addressDisabled, setAddressDisabled] = useState(true);
     const [addressLocation, setAddressLocation] = useState('');
-
-    const renderItem = ({ item, index }) => (
-        <ListItem title={`${item.label}`} onPressOut={() => { setAddress(item.label); setVisible(false); }} style={{ flex: 1 }} />
-    );
-
-    const selectedMethodContent = [
-        'Utiliser ma localisation',
-        "Entrer manuellement l'addresse",
-    ];
-
-    const selectedTagContent = [
-        'Bar',
-        'Restaurant',
-        'Loisir',
-        'Nature',
-        'Nourriture à emporter',
-        'Jeunesse',
-    ];
-
-    const tagNameToIcon = (tagName) => {
-        if (tagName === 'Bar')
-            return { name: "local-bar", pack: "material" }
-        if (tagName === 'Restaurant')
-            return { name: "fastfood", pack: "material" }
-        if (tagName === 'Loisir')
-            return { name: "drama-masks", pack: "materialcommunity" }
-        if (tagName === 'Nature')
-            return { name: "park", pack: "material" }
-        if (tagName === 'Nourriture à emporter')
-            return { name: "local-pizza", pack: "material" }
-        if (tagName === 'Jeunesse')
-            return { name: "child-care", pack: "material" }
-    };
-
-    const renderOption = (title) => (
-        <SelectItem title={title} />
-    );
-
-    const displayValue = selectedMethodContent[selectedMethod.row];
-
-    const groupDisplayValues = selectedTag.map(index => {
-        return selectedTagContent[index.row] + " ";
-    });
 
     useEffect(() => {
         (async () => {
@@ -84,97 +58,149 @@ const EditPlace = ({ navigation, dispatch }) => {
         })();
     });
 
+    const renderItem = ({ item, index }) => (
+        <ListItem
+            title={`${item.label}`}
+            onPressOut={async () => {
+                setAddress(item.label);
+                setVisible(false);
+                await sendPlace(item.label);
+                console.log(item);
+            }}
+            style={{ flex: 1 }}
+        />
+    );
+
+    const selectedMethodContent = [
+        "Utiliser ma localisation",
+        "Entrer manuellement l'addresse",
+    ];
+
+    const selectedTagContent = [
+        'Bar',
+        'Restaurant',
+        'Loisir',
+        'Nature',
+        'Nourriture à emporter',
+        'Jeunesse',
+    ];
+
+    const renderOption = (title) => <SelectItem title={title} key={title} />;
+
+    const displayValue = selectedMethodContent[selectedMethod.row];
+
+    const groupDisplayValues = selectedTag.map((index) => {
+        return selectedTagContent[index.row] + " ";
+    });
+
+    const sendPlace = async (addr) => {
+        const res = await forward(addr);
+        //console.log(JSON.stringify(addr))
+        setData(res);
+        if (addr === res[0].label) {
+            let place = res[0];
+            if (place.type === "venue") {
+                const reverseData = await reverse(place.latitude, place.longitude);
+                place = reverseData.data.find((p) => p.type === "address");
+                if (!place) place = res[0];
+            }
+            const icon = []
+            selectedTag.forEach(element => {
+                icon.push(categories[selectedTagContent[element.row]]);
+
+            });
+            console.log(icon);
+            const result = await addPlace(
+                place.label,
+                {
+                    latitude: place.latitude,
+                    longitude: place.longitude
+                },
+                description,
+                name,
+                icon
+            )
+
+            const action = { type: "ADD_PLACE", value: result };
+            dispatch(action);
+            navigation.goBack();
+        } else setVisible(true);
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <KeyboardAvoidingView style={styles.container2} behavior="padding">
-
-                    <Text style={styles.title}>Compléter ces champs pour enregister un lieu</Text>
+                    <Text style={styles.title}>
+                        Compléter ces champs pour enregister un lieu
+                    </Text>
 
                     <Select
                         multiSelect={false}
                         selectedIndex={selectedMethod}
-                        onSelect={index => setSelectedMethod(index)}
+                        onSelect={(index) => setSelectedMethod(index)}
                         style={styles.select}
-                        placeholder="Choisir le mode de saisie de l'addresse"
+                        placeholder="Choisir le mode de saisie de l'adresse"
                         value={displayValue}
                     >
                         {selectedMethodContent.map(renderOption)}
-
                     </Select>
 
                     <Input
-                        placeholder='Nom'
+                        placeholder="Nom"
                         value={name}
-                        onChangeText={nextValue => setName(nextValue)}
+                        onChangeText={(nextValue) => setName(nextValue)}
                         style={styles.textInput}
                     />
                     <Input
-                        placeholder='Description'
+                        placeholder="Description"
                         value={description}
                         multiline={true}
-                        textStyle={{ minHeight: 64 }} onChangeText={nextValue => setDescription(nextValue)}
+                        textStyle={{ minHeight: 64 }}
+                        onChangeText={(nextValue) => setDescription(nextValue)}
                         style={styles.textInput}
                     />
                     <Input
-                        placeholder='Adresse'
+                        placeholder="Adresse"
                         value={address}
                         multiline={true}
-                        onChangeText={nextValue => setAddress(nextValue)}
+                        onChangeText={(nextValue) => setAddress(nextValue)}
                         style={styles.textInput}
                         disabled={addressDisabled}
                     />
                     <Select
                         multiSelect={true}
                         selectedIndex={selectedTag}
-                        onSelect={index => setSelectedTag(index)}
+                        onSelect={(index) => setSelectedTag(index)}
                         style={styles.select}
                         placeholder="Choisir des tags"
                         value={groupDisplayValues}
                     >
                         {selectedTagContent.map(renderOption)}
-
                     </Select>
 
-                    <Button onPress={async () => {
-                        const res = await forward(address)
-                        setData(res)
-                        if (address === res[0].label) {
-                            let place = res[0];
-                            if (place.type === "venue") {
-                                const reverseData = await reverse(place.latitude, place.longitude);
-                                place = reverseData.data.find(p => p.type === "address");
-                            }
-                            const icon = []
-                            selectedTag.forEach(element => {
-                                icon.push(tagNameToIcon(selectedTagContent[element.row]));
-
-                            });
-                            const result = await addPlace(place.label, { latitude: place.latitude, longitude: place.longitude }, description, name, icon)
-                            const action = { type: "ADD_PLACE", value: result };
-                            dispatch(action);
-                            navigation.goBack()
-                        } else
-                            setVisible(true);
-                    }}
-                        style={styles.button}>
+                    <Button
+                        onPress={async () => await sendPlace(address)}
+                        style={styles.button}
+                    >
                         Enregistrer le lieu
                     </Button>
 
                     <Modal
-                        style={{ maxheight: Dimensions.get('window').height - 100, width: Dimensions.get('window').width - 50 }}
+                        style={{
+                            maxheight: Dimensions.get("window").height - 100,
+                            width: Dimensions.get("window").width - 50,
+                        }}
                         visible={visible}
                         backdropStyle={styles.backdrop}
-                        onBackdropPress={() => setVisible(false)}>
+                        onBackdropPress={() => setVisible(false)}
+                    >
                         <Card disabled={true}>
-
-                            <Text category={'h2'} style={{ paddingBottom: 10 }} >Select address</Text>
-                            <List
-                                data={data}
-                                renderItem={renderItem}
-                            />
-                            <Button onPress={() => console.log(data)}
-                                style={styles.button}>
+                            <Text category={"h2"} style={{ paddingBottom: 10 }}>
+                                Select address
+                            </Text>
+                            <List data={data} renderItem={renderItem} />
+                            <Button onPress={() => setVisible(false)} style={styles.button}>
                                 DISMISS
                             </Button>
                         </Card>
@@ -251,3 +277,8 @@ const styles = StyleSheet.create({
         height: 28,
     },
 });
+
+
+
+
+
