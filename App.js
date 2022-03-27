@@ -13,6 +13,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 import Navigation from './src/navigation/Navigation';
 import { Store } from './src/store/config';
+import { default as theme } from './src/theme/theme.json';
 
 // Suppression de warning provenant du package 'firebase' (pas d'autre solution à ce jour)
 LogBox.ignoreLogs(['Setting a timer for a long period of time']);
@@ -34,7 +35,7 @@ export default function App() {
   return (
     <Provider store={Store}>
       <IconRegistry icons={[EvaIconsPack, MaterialIconsPack, MaterialCommunityIconsPack]} />
-      <ApplicationProvider {...eva} theme={eva.light}>
+      <ApplicationProvider {...eva} theme={{ ...eva.light, ...theme }}>
         <RootSiblingParent>
           <NavigationContainer>
             <Navigation isSignedIn={isSignedIn} />
