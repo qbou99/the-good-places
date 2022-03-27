@@ -47,7 +47,6 @@ const Map = ({ navigation, visiblePlaces, dispatch, places }) => {
       let location = await Location.getCurrentPositionAsync({});
       location.coords.longitudeDelta = 0.0421;
       location.coords.latitudeDelta = 0.0922;
-      console.log(JSON.stringify(location));
       setLocation(location);
 
       const res = await getUserPlaces()

@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc, deleteDoc } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -218,3 +218,31 @@ export const getUserPlaces = async (userId = null) => {
     }
     return tabPlace;
 }
+
+export const copyPlace = async (place, places) => {
+    const userId = await getUserId();
+    if (userId != null) {
+      const user = await getUserById(userId)
+      if (user != null) {
+        const originalId = place.originalId || place.id
+        const found = places.find(p => {
+          const pId = p.originalId || p.id
+          return pId === originalId
+        })
+        if (!found) {
+          const res = await addPlace(place.address, place.coordinates, place.description, place.name, place.tags, originalId)
+
+          await setUser(userId, user.username, user.mailAddress, user.friends, [...user.places, res.id])
+
+          return res;
+
+        } else {
+          return null
+        }
+      }
+    }
+  };
+
+  export const deletePlace = async (placeId) => {
+    await deleteDoc(doc(db, "Places", placeId));
+  }

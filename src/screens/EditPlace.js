@@ -66,7 +66,6 @@ const EditPlace = ({ navigation, dispatch }) => {
                 setAddress(item.label);
                 setVisible(false);
                 await sendPlace(item.label);
-                console.log(item);
             }}
             style={{ flex: 1 }}
         />
@@ -96,7 +95,6 @@ const EditPlace = ({ navigation, dispatch }) => {
 
     const sendPlace = async (addr) => {
         const res = await forward(addr);
-        //console.log(JSON.stringify(addr))
         setData(res);
         if (addr === res[0].label) {
             let place = res[0];
@@ -110,7 +108,6 @@ const EditPlace = ({ navigation, dispatch }) => {
                 icon.push(categories[selectedTagContent[element.row]]);
 
             });
-            console.log(icon);
             const result = await addPlace(
                 place.label,
                 {
