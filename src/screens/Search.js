@@ -160,7 +160,7 @@ const Search = ({ navigation }) => {
 
         <View style={styles.selectedCityAndDistance}>
           <TouchableOpacity onPress={toogleLocation}>{searchLocation ? <TagsIcon name="my-location" pack="material" /> : <TagsIcon name="location-searching" pack="material" />}</TouchableOpacity>
-          {searchLocation ? <Text>Ma location</Text> : <Select
+          {searchLocation ? <Text style={styles.locationCity}>{locationCity}</Text> : <Select
             multiSelect={false}
             onSelect={
               function onSelect(index) {
@@ -272,6 +272,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     margin: 5,
+  },
+
+  locationCity: {
+    width: '45%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    textAlign: 'center',
+    margin: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 16,
+    paddingTop: 10,
   },
 
   selectedDistance: {
