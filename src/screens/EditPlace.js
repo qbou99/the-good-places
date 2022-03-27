@@ -149,9 +149,8 @@ const EditPlace = ({ navigation, dispatch, route }) => {
                     icon,
                     modifPlace.originalId
                 )
-                console.log(result)
-                const action = { type: "EDIT_PLACE", value: result };
-                dispatch(action);
+                dispatch({ type: "EDIT_PLACE", value: result });
+                dispatch({ type: "EDIT_VISIBLE_PLACE", value: result });
             } else {
                 result = await addPlace(
                     place.label,

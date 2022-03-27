@@ -15,6 +15,12 @@ function visiblePlaces(state = initialState, action) {
         visiblePlaces: state.visiblePlaces.filter(p => p.id !== action.value.id)
       };
       return nextState || state
+    case 'EDIT_VISIBLE_PLACE':
+      nextState = {
+        ...state,
+        visiblePlaces: [...state.visiblePlaces.filter(p => p.id !== action.value.id), action.value]
+      };
+      return nextState || state
     default:
       return state
   };
