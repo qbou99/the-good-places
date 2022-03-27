@@ -2,6 +2,7 @@
 
 ## Johann Conicella - Quentin Boucksom
 
+Fonctionnalités ajoutées :
 - Base de données Firebase
 - Authentitification / Création de compte
 - Liste d'amis
