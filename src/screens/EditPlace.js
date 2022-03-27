@@ -22,10 +22,10 @@ import {
 import { connect } from "react-redux";
 import * as Location from "expo-location";
 import { forward, reverse } from "../api/positionstack";
-import { addPlace } from "../../config/firebase";
+import { addPlace, setPlace } from "../../config/firebase";
 import categories from "../helpers/categories";
 
-const EditPlace = ({ navigation, dispatch }) => {
+const EditPlace = ({ navigation, dispatch, route }) => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [address, setAddress] = useState("");
@@ -37,7 +37,31 @@ const EditPlace = ({ navigation, dispatch }) => {
     const [addressLocation, setAddressLocation] = useState('');
     const [cityLocation, setCityLocation] = useState('');
 
+    const [modifPlace, setModifPlace] = useState(null);
+
     useEffect(() => {
+        //console.log(placeData);
+        if (route?.params?.placeData) {
+            setModifPlace(route?.params?.placeData)
+            setAddress(route?.params?.placeData.address)
+            setName(route?.params?.placeData.name)
+            setDescription(route?.params?.placeData.description)
+            setCityLocation(route?.params?.placeData.city)
+            let tags = []
+            let i = 0;
+            selectedTagContent.forEach(tag => {
+                console.log(tag)
+
+                let found = route?.params?.placeData.tags.find(tag2 => { return (tag2.name == categories[tag].name) })
+                if (found) {
+                    tags.push(new IndexPath(i))
+                }
+                i++
+            });
+            console.log(tags)
+            setSelectedTag(tags)
+        }
+
         (async () => {
             let location = await Location.getCurrentPositionAsync({});
             const addr = await reverse(location.coords.latitude, location.coords.longitude);
@@ -113,20 +137,37 @@ const EditPlace = ({ navigation, dispatch }) => {
                 icon.push(categories[selectedTagContent[element.row]]);
 
             });
-            const result = await addPlace(
-                place.label,
-                city,
-                {
-                    latitude: place.latitude,
-                    longitude: place.longitude
-                },
-                description,
-                name,
-                icon
-            )
+            let result;
+            if (modifPlace) {
+                result = await setPlace(
+                    modifPlace.id,
+                    modifPlace.address,
+                    modifPlace.city,
+                    modifPlace.coordinates,
+                    description,
+                    name,
+                    icon
+                )
+                console.log(result)
+                const action = { type: "EDIT_PLACE", value: result };
+                dispatch(action);
+            } else {
+                result = await addPlace(
+                    place.label,
+                    city,
+                    {
+                        latitude: place.latitude,
+                        longitude: place.longitude
+                    },
+                    description,
+                    name,
+                    icon
+                )
+                const action = { type: "ADD_PLACE", value: result };
+                dispatch(action);
+            }
 
-            const action = { type: "ADD_PLACE", value: result };
-            dispatch(action);
+
             navigation.goBack();
         } else setVisible(true);
     };
@@ -135,11 +176,13 @@ const EditPlace = ({ navigation, dispatch }) => {
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <KeyboardAvoidingView style={styles.container2} behavior="padding">
-                    <Text style={styles.title}>
+                    {modifPlace ? <Text style={styles.title}>
+                        Compléter ces champs pour modifier un lieu
+                    </Text> : <Text style={styles.title}>
                         Compléter ces champs pour enregister un lieu
-                    </Text>
+                    </Text>}
 
-                    <Select
+                    {modifPlace ? (<></>) : (<Select
                         multiSelect={false}
                         selectedIndex={selectedMethod}
                         onSelect={(index) => setSelectedMethod(index)}
@@ -148,7 +191,8 @@ const EditPlace = ({ navigation, dispatch }) => {
                         value={displayValue}
                     >
                         {selectedMethodContent.map(renderOption)}
-                    </Select>
+                    </Select>)}
+
 
                     <Input
                         placeholder="Nom"
@@ -164,14 +208,14 @@ const EditPlace = ({ navigation, dispatch }) => {
                         onChangeText={(nextValue) => setDescription(nextValue)}
                         style={styles.textInput}
                     />
-                    <Input
+                    {modifPlace ? (<></>) : (<Input
                         placeholder="Adresse"
                         value={address}
                         multiline={true}
                         onChangeText={(nextValue) => setAddress(nextValue)}
                         style={styles.textInput}
                         disabled={addressDisabled}
-                    />
+                    />)}
                     <Select
                         multiSelect={true}
                         selectedIndex={selectedTag}
@@ -183,12 +227,17 @@ const EditPlace = ({ navigation, dispatch }) => {
                         {selectedTagContent.map(renderOption)}
                     </Select>
 
-                    <Button
+                    {modifPlace ? <Button
+                        onPress={async () => await sendPlace(address)}
+                        style={styles.button}
+                    >
+                        Modifier le lieu
+                    </Button> : <Button
                         onPress={async () => await sendPlace(address)}
                         style={styles.button}
                     >
                         Enregistrer le lieu
-                    </Button>
+                    </Button>}
 
                     <Modal
                         style={{

@@ -66,17 +66,27 @@ const PlaceDetails = ({ route, dispatch, navigation }) => {
         </View>
         <View>
           {ownPlace ? (
-            <Button
-              style={[styles.button, styles.buttonDelete]}
-              onPress={async () => {
-                await deletePlace(placeData.id);
-                Toast.show("Place supprimée", {
-                  duration: Toast.durations.LONG,
-                });
-              }}
-            >
-              Supprimer
-            </Button>
+            <View>
+              <Button
+                style={[styles.button, styles.buttonDelete]}
+                onPress={async () => {
+                  await deletePlace(placeData.id);
+                  Toast.show("Place supprimée", {
+                    duration: Toast.durations.LONG,
+                  });
+                }}
+              >
+                Supprimer
+              </Button>
+              <Button
+                style={[styles.button]}
+                onPress={async () => {
+                  navigation.navigate("ViewEditPlace", { placeData: placeData })
+                }}
+              >
+                Modifier
+              </Button>
+            </View>
           ) : (
             <Button
               style={[styles.button, saved ? null : styles.buttonSave]}
