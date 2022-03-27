@@ -146,7 +146,8 @@ const EditPlace = ({ navigation, dispatch, route }) => {
                     modifPlace.coordinates,
                     description,
                     name,
-                    icon
+                    icon,
+                    modifPlace.originalId
                 )
                 console.log(result)
                 const action = { type: "EDIT_PLACE", value: result };

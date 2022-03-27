@@ -9,12 +9,13 @@ import * as Location from "expo-location";
 import { getUserPlaces } from "../../config/firebase";
 import DisplayError from "./DisplayError";
 
-const Map = ({ navigation, visiblePlaces, dispatch, places }) => {
+const Map = ({ navigation, visiblePlaces, dispatch }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isError, setIsError] = useState(false);
   const [location, setLocation] = useState(null);
   const mapRef = useRef(null);
   const center = useSelector((state) =>state.centerCoords);
+  const places = useSelector((state) =>state.places.places);
 
   const navigateToRestaurantDetails = (restaurantID) => {
     navigation.navigate("ViewRestaurant", { restaurantID });
@@ -44,17 +45,22 @@ const Map = ({ navigation, visiblePlaces, dispatch, places }) => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      location.coords.longitudeDelta = 0.0421;
-      location.coords.latitudeDelta = 0.0922;
-      setLocation(location);
+      let l = await Location.getCurrentPositionAsync({});
+      l.coords.longitudeDelta = 0.0421;
+      l.coords.latitudeDelta = 0.0922;
+      setLocation(l.coords);
 
       const res = await getUserPlaces()
       const action = { type: "SET_PLACES", value: res };
       dispatch(action);
-      onRegionChange(location.coords);
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      onRegionChange(location);
+    })();
+  }, [places]);
 
   useEffect(() => {
     (async () => {
@@ -67,6 +73,8 @@ const Map = ({ navigation, visiblePlaces, dispatch, places }) => {
   }, [center]);
 
   const onRegionChange = (region) => {
+    if(!region)
+      return;
     const coordsVisible = getBoundByRegion(region);
     places.forEach((p) => {
       if (
@@ -99,10 +107,10 @@ const Map = ({ navigation, visiblePlaces, dispatch, places }) => {
           ref={mapRef}
           showsPointsOfInterest={false}
           initialRegion={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: location.coords.latitudeDelta,
-            longitudeDelta: location.coords.longitudeDelta,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: location.latitudeDelta,
+            longitudeDelta: location.longitudeDelta,
           }}
           style={styles.map}
           customMapStyle={customMapStyle}

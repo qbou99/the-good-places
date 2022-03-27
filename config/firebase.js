@@ -80,7 +80,7 @@ export const getPlacesById = async (id) => {
     }
 }
 
-export const addPlace = async (address, city, coordinates, description, name, tags, originalId = undefined) => {
+export const addPlace = async (address, city, coordinates, description, name, tags, originalId = null) => {
     const place = await addDoc(collection(db, "Places"), {
         address: address,
         city: city,
@@ -132,7 +132,7 @@ export const addUser = async (username, mailAddress, friends = [], places = [], 
     }
 }
 
-export const setPlace = async (id, address, city, coordinates, description, name, tags) => {
+export const setPlace = async (id, address, city, coordinates, description, name, tags, originalId = null) => {
     const place = await setDoc(doc(db, "Places", id), {
         address: address,
         city: city,
@@ -140,6 +140,7 @@ export const setPlace = async (id, address, city, coordinates, description, name
         description: description,
         name: name,
         tags: tags,
+        originalId: originalId
     });
     console.log("set place : " + id);
     try {
@@ -250,7 +251,7 @@ export const copyPlace = async (place, places) => {
                 return pId === originalId
             })
             if (!found) {
-                const res = await addPlace(place.address, place.coordinates, place.description, place.name, place.tags, originalId)
+                const res = await addPlace(place.address, place.city, place.coordinates, place.description, place.name, place.tags, originalId)
 
                 await setUser(userId, user.username, user.mailAddress, user.friends, [...user.places, res.id])
 
