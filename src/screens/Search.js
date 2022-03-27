@@ -19,7 +19,7 @@ const Search = ({ navigation }) => {
   const [visiblePlaces, setVisiblePlaces] = useState([]);
 
   const [search, setSearch] = useState('');
-  const [selectedTag, setSelectedTag] = useState([]);
+  const [selectedTag, setSelectedTag] = useState('');
   const [userCities, setUserCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState(new IndexPath(0));
   const [selectedCityName, setSelectedCityName] = useState("");
@@ -45,13 +45,12 @@ const Search = ({ navigation }) => {
 
   const renderOption = (title) => <SelectItem title={title} key={title} />;
 
-  const groupDisplayValues = selectedTag.map((index) => {
-    return selectedTagContent[index.row] + " ";
-  });
-
   const displayCity = userCities[selectedCity.row];
 
   const displayDistance = distanceContent[selectedDistance.row];
+
+  const displayTag = selectedTagContent[selectedTag.row];
+
 
   const toogleLocation = () => {
 
@@ -102,9 +101,7 @@ const Search = ({ navigation }) => {
     (async () => {
       console.log(selectedTagContent)
       let pl = places.filter(p => {
-        selectedTag.forEach(t => {
-          
-        })
+      
         return p.name.toLowerCase().includes(search.toLowerCase()) && true
           p.tags.find(t => t.name === "cate")
       })
@@ -127,7 +124,7 @@ const Search = ({ navigation }) => {
         />
 
         <Select
-          multiSelect={true}
+          multiSelect={false}
           selectedIndex={selectedTag}
           onSelect={
             function onSelect(index) {
@@ -137,7 +134,7 @@ const Search = ({ navigation }) => {
           }
           style={styles.select}
           placeholder="Choisir des tags"
-          value={groupDisplayValues}
+          value={displayTag}
         >
           {selectedTagContent.map(renderOption)}
         </Select>
