@@ -60,7 +60,7 @@ export const getUserById = async (id) => {
 
     if (docSnap.exists()) {
         console.log("User data:", docSnap.data());
-        return {id: docSnap.id, ...docSnap.data()};
+        return { id: docSnap.id, ...docSnap.data() };
     } else {
         console.log("Pas de user id : " + id);
         return null;
@@ -73,7 +73,7 @@ export const getPlacesById = async (id) => {
 
     if (docSnap.exists()) {
         console.log("Place data:", docSnap.data());
-        return {id: docSnap.id, ...docSnap.data()};
+        return { id: docSnap.id, ...docSnap.data() };
     } else {
         console.log("Pas de place id : " + id);
         return null;
@@ -101,7 +101,7 @@ export const addPlace = async (address, coordinates, description, name, tags) =>
     });
     console.log("add place : " + name);
     const docSnap = await getDoc(place);
-    return {id: docSnap.id, ...docSnap.data()};
+    return { id: docSnap.id, ...docSnap.data() };
 }
 
 export const addUser = async (username, mailAddress, friends = [], places = []) => {
@@ -113,7 +113,7 @@ export const addUser = async (username, mailAddress, friends = [], places = []) 
     })
     console.log("add user : " + username);
     const docSnap = await getDoc(user);
-    return {id: docSnap.id, ...docSnap.data()};
+    return { id: docSnap.id, ...docSnap.data() };
 }
 
 export const setPlace = async (id, address, coordinates, description, name, tags) => {
@@ -126,7 +126,7 @@ export const setPlace = async (id, address, coordinates, description, name, tags
     });
     console.log("set place : " + id);
     const docSnap = await getDoc(place);
-    return {id: docSnap.id, ...docSnap.data()};
+    return { id: docSnap.id, ...docSnap.data() };
 }
 
 export const setUser = async (id, username, mailAddress, friends = [], places = []) => {
@@ -138,7 +138,7 @@ export const setUser = async (id, username, mailAddress, friends = [], places = 
     });
     console.log("set user : " + id);
     const docSnap = await getDoc(user);
-    return {id: docSnap.id, ...docSnap.data()};
+    return { id: docSnap.id, ...docSnap.data() };
 }
 
 export const addFriend = async (friendId) => {
@@ -190,14 +190,14 @@ export const getUserPlaces = async (userId = null) => {
     const user = await getUserById(userId || await getUserId())
     let tabPlace = []
     if (user != null) {
-      for (const element of user.places) {
-        const place = await getPlacesById(element)
-        if (place != null) {
-          const found = tabPlace.find(p => p.id === place.id)
-          if (!found)
-            tabPlace.push(place)
+        for (const element of user.places) {
+            const place = await getPlacesById(element)
+            if (place != null) {
+                const found = tabPlace.find(p => p.id === place.id)
+                if (!found)
+                    tabPlace.push(place)
+            }
         }
-      }
     }
     return tabPlace;
-  }
+}

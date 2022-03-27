@@ -9,10 +9,12 @@ import TagsIcon from "../components/TagsIcon";
 import TagsList from "../components/TagsList";
 
 const Home = ({ navigation }) => {
+
   return (
     <View>
       <Map />
       <Button
+        style={styles.button}
         onPress={() => {
           navigation.navigate("ViewEditPlace");
         }}
@@ -31,5 +33,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  button: {
+    flexDirection: 'row',
+    margin: 10,
+    backgroundColor: '#6db966',
+    borderColor: '#6db966',
+    borderRadius: 10,
+    height: 45
   },
 });

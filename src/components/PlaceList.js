@@ -32,6 +32,7 @@ const PlaceList = ({ onClick, visiblePlaces, dispatch, navigation }) => {
             navigation={navigation}
             centerOnPlace={()=>centerCoords(item.coordinates)}
             map={true}
+            dispatch={dispatch}
           />
         }
         refreshing={isRefreshing}

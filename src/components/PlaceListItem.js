@@ -1,34 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { connect } from "react-redux";
 import { Text } from '@ui-kitten/components'
 import { Icon } from '@ui-kitten/components';
+import Toast from 'react-native-root-toast';
 
-import { getPlacesById } from '../../config/firebase';
+import { setUser, getUserById, getUserId } from '../../config/firebase';
 import TagsList from './TagsList';
 
-const PlaceListItem = ({ place, navigation, centerOnPlace, map }) => {
-
-  const [placeData, setPlaceData] = useState([]);
+const PlaceListItem = ({ place, navigation, centerOnPlace, map, dispatch }) => {
 
   function navigateToPlaceDetails() {
-    return navigation.navigate("ViewPlaceDetails", { placeData: placeData });
+    return navigation.navigate("ViewPlaceDetails", { placeData: place });
   }
+
+  const copiPlace = async () => {
+    const user = await getUserById(await getUserId())
+
+    console.log(user.places)
+    console.log(place.id)
+
+    if (!user.places.includes(place.id)) {
+      await setUser(user.id, user.username, user.mailAddress, user.friends, user.places.concat(place.id))
+      Toast.show('Lieux copié', {
+        duration: Toast.durations.LONG,
+      });
+    } else {
+      Toast.show('Vous avez déjà ce lieu', {
+        duration: Toast.durations.LONG,
+      });
+    }
+  };
+
 
   return (
     <TouchableOpacity style={styles.container} onPress={navigateToPlaceDetails}>
       <View style={styles.informationContainer}>
         <Text style={styles.title}>{place.name}</Text>
-        <Text style={styles.city}>{place.description}</Text>
+        <Text style={styles.city}>{place.description.length > 12 ? place.description.substring(0, 12) + "..." : place.description}</Text>
       </View>
       <View style={styles.iconContainer}>
         <TagsList tags={place.tags} />
-        {map ? <TouchableOpacity onPress={centerOnPlace}><Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity> : null}
+        {map ? <TouchableOpacity onPress={centerOnPlace}><Icon name={"map-outline"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity> : <TouchableOpacity onPress={copiPlace}><Icon name={"copy"} style={styles.icon} fill='#8F9BB3' /></TouchableOpacity>}
       </View>
     </TouchableOpacity>
   );
 };
 
-export default PlaceListItem;
+const mapStateToProps = (state) => {
+  return {
+    places: state.places.places,
+  };
+};
+
+export default connect(mapStateToProps)(PlaceListItem);
 
 const styles = StyleSheet.create({
   container: {

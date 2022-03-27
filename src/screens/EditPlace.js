@@ -3,11 +3,12 @@ import { View, StyleSheet, Dimensions, ScrollView, KeyboardAvoidingView } from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input, Select, SelectItem, Button, Modal, Card, Text, List, ListItem, IndexPath } from '@ui-kitten/components';
 import { connect } from "react-redux";
-
+import * as Location from "expo-location";
 import { forward, reverse } from '../api/positionstack'
+
 import { addPlace } from '../../config/firebase'
 
-const EditPlace = ( {navigation, dispatch} ) => {
+const EditPlace = ({ navigation, dispatch }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [address, setAddress] = useState('');
@@ -15,6 +16,8 @@ const EditPlace = ( {navigation, dispatch} ) => {
     const [selectedMethod, setSelectedMethod] = useState(new IndexPath(0));
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState([]);
+    const [addressDisabled, setAddressDisabled] = useState(true);
+    const [addressLocation, setAddressLocation] = useState('');
 
     const renderItem = ({ item, index }) => (
         <ListItem title={`${item.label}`} onPressOut={() => { setAddress(item.label); setVisible(false); }} style={{ flex: 1 }} />
@@ -29,8 +32,25 @@ const EditPlace = ( {navigation, dispatch} ) => {
         'Bar',
         'Restaurant',
         'Loisir',
-        'Autre',
+        'Nature',
+        'Nourriture à emporter',
+        'Jeunesse',
     ];
+
+    const tagNameToIcon = (tagName) => {
+        if (tagName === 'Bar')
+            return { name: "local-bar", pack: "material" }
+        if (tagName === 'Restaurant')
+            return { name: "fastfood", pack: "material" }
+        if (tagName === 'Loisir')
+            return { name: "drama-masks", pack: "materialcommunity" }
+        if (tagName === 'Nature')
+            return { name: "park", pack: "material" }
+        if (tagName === 'Nourriture à emporter')
+            return { name: "local-pizza", pack: "material" }
+        if (tagName === 'Jeunesse')
+            return { name: "child-care", pack: "material" }
+    };
 
     const renderOption = (title) => (
         <SelectItem title={title} />
@@ -40,6 +60,28 @@ const EditPlace = ( {navigation, dispatch} ) => {
 
     const groupDisplayValues = selectedTag.map(index => {
         return selectedTagContent[index.row] + " ";
+    });
+
+    useEffect(() => {
+        (async () => {
+            let location = await Location.getCurrentPositionAsync({});
+            const addr = await reverse(location.coords.latitude, location.coords.longitude);
+            setAddressLocation(addr);
+        })();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            if (displayValue == "Entrer manuellement l'addresse") {
+                setAddressDisabled(false);
+            }
+            else {
+                setAddressDisabled(true);
+                if (addressLocation) {
+                    setAddress(addressLocation.data[0].name + ", " + addressLocation.data[0].locality + ", " + addressLocation.data[0].country);
+                }
+            }
+        })();
     });
 
     return (
@@ -71,7 +113,7 @@ const EditPlace = ( {navigation, dispatch} ) => {
                         placeholder='Description'
                         value={description}
                         multiline={true}
-                        onChangeText={nextValue => setDescription(nextValue)}
+                        textStyle={{ minHeight: 64 }} onChangeText={nextValue => setDescription(nextValue)}
                         style={styles.textInput}
                     />
                     <Input
@@ -80,6 +122,7 @@ const EditPlace = ( {navigation, dispatch} ) => {
                         multiline={true}
                         onChangeText={nextValue => setAddress(nextValue)}
                         style={styles.textInput}
+                        disabled={addressDisabled}
                     />
                     <Select
                         multiSelect={true}
@@ -102,7 +145,12 @@ const EditPlace = ( {navigation, dispatch} ) => {
                                 const reverseData = await reverse(place.latitude, place.longitude);
                                 place = reverseData.data.find(p => p.type === "address");
                             }
-                            const result = await addPlace(place.label, {latitude: place.latitude, longitude: place.longitude}, description, name, [{name:"local-pizza", pack:"material"}])
+                            const icon = []
+                            selectedTag.forEach(element => {
+                                icon.push(tagNameToIcon(selectedTagContent[element.row]));
+
+                            });
+                            const result = await addPlace(place.label, { latitude: place.latitude, longitude: place.longitude }, description, name, icon)
                             const action = { type: "ADD_PLACE", value: result };
                             dispatch(action);
                             navigation.goBack()
@@ -139,11 +187,11 @@ const EditPlace = ( {navigation, dispatch} ) => {
 
 const mapStateToProps = (state) => {
     return {
-      visiblePlaces: state.visiblePlaces.visiblePlaces,
-      centerCoords: state.centerCoords.centerCoords,
-      places: state.places.places,
+        visiblePlaces: state.visiblePlaces.visiblePlaces,
+        centerCoords: state.centerCoords.centerCoords,
+        places: state.places.places,
     };
-  };
+};
 
 export default connect(mapStateToProps)(EditPlace);
 
@@ -194,5 +242,12 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 10,
         margin: 5,
+    },
+
+    icon: {
+        marginLeft: 4,
+        marginTop: 4,
+        width: 28,
+        height: 28,
     },
 });
