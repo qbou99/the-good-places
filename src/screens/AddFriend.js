@@ -67,7 +67,7 @@ const AddFriend = ({ navigation }) => {
                             duration: Toast.durations.LONG,
                         });
                     }}>
-                        Copié mon ID
+                        Copier mon ID
                     </Button>
                 </KeyboardAvoidingView>
             </ScrollView>
