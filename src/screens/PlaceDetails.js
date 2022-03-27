@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text, Button } from "@ui-kitten/components";
+import { Text, Button, Icon } from "@ui-kitten/components";
 import { connect, useSelector } from "react-redux";
 import Toast from "react-native-root-toast";
 
@@ -10,7 +10,7 @@ import TagsIcon from "../components/TagsIcon";
 import TagsList from "../components/TagsList";
 import { copyPlace, deletePlace } from "../../config/firebase";
 
-const PlaceDetails = ({ route, dispatch }) => {
+const PlaceDetails = ({ route, dispatch, navigation }) => {
   const { placeData, ownPlace } = route.params;
   const [savedText, setSavedText] = useState("Sauvegarder");
   const [saved, setSaved] = useState(false);
@@ -25,74 +25,84 @@ const PlaceDetails = ({ route, dispatch }) => {
       });
       if (found) {
         setSavedText("Sauvegardé");
-        setSaved(true)
+        setSaved(true);
       } else {
         setSavedText("Sauvegarder");
-        setSaved(false)
+        setSaved(false);
       }
     })();
   }, [places]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <View style={styles.containerTitle}>
-          <Text style={styles.title}>{placeData.name}</Text>
-          <TagsList tags={placeData.tags} />
-        </View>
-
-        <View style={styles.containerInfo}>
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>
-              <Text style={styles.text2}>Adresse :</Text> {placeData.address}
-            </Text>
+    <>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Icon
+          name={"close-outline"}
+          style={styles.icon}
+          fill="#8F9BB3"
+          pack={"eva"}
+        />
+      </TouchableOpacity>
+      <SafeAreaView style={styles.container}>
+        <View>
+          <View style={styles.containerTitle}>
+            <Text style={styles.title}>{placeData.name}</Text>
+            <TagsList tags={placeData.tags} />
           </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>
-              <Text style={styles.text2}>Description :</Text>{" "}
-              {placeData.description}
-            </Text>
+
+          <View style={styles.containerInfo}>
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>
+                <Text style={styles.text2}>Adresse :</Text> {placeData.address}
+              </Text>
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>
+                <Text style={styles.text2}>Description :</Text>{" "}
+                {placeData.description}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-      <View>
-        {ownPlace ? (
-          <Button
-            style={[styles.button, styles.buttonDelete]}
-            onPress={async () => {
-              await deletePlace(placeData.id);
-              Toast.show("Place supprimée", {
-                duration: Toast.durations.LONG,
-              });
-            }}
-          >
-            Supprimer
-          </Button>
-        ) : (
-          <Button
-            style={[styles.button, saved ? null : styles.buttonSave]}
-            disabled={saved}
-            onPress={async () => {
-              const res = await copyPlace(placeData, places);
-              if (res) {
-                const action = { type: "ADD_PLACE", value: res };
-                dispatch(action);
-
-                Toast.show("Lieux copié", {
+        <View>
+          {ownPlace ? (
+            <Button
+              style={[styles.button, styles.buttonDelete]}
+              onPress={async () => {
+                await deletePlace(placeData.id);
+                Toast.show("Place supprimée", {
                   duration: Toast.durations.LONG,
                 });
-              } else {
-                Toast.show("Vous avez déjà ce lieu", {
-                  duration: Toast.durations.LONG,
-                });
-              }
-            }}
-          >
-            {savedText}
-          </Button>
-        )}
-      </View>
-    </SafeAreaView>
+              }}
+            >
+              Supprimer
+            </Button>
+          ) : (
+            <Button
+              style={[styles.button, saved ? null : styles.buttonSave]}
+              disabled={saved}
+              onPress={async () => {
+                const res = await copyPlace(placeData, places);
+                if (res) {
+                  const action = { type: "ADD_PLACE", value: res };
+                  dispatch(action);
+
+                  Toast.show("Lieux copié", {
+                    duration: Toast.durations.LONG,
+                  });
+                } else {
+                  Toast.show("Vous avez déjà ce lieu", {
+                    duration: Toast.durations.LONG,
+                  });
+                }
+              }}
+            >
+              {savedText}
+            </Button>
+          )}
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -108,13 +118,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    margin: 5,
-    paddingTop: 20,
+    marginHorizontal: 5,
     justifyContent: "space-around",
   },
 
   containerTitle: {
-    margin: 20,
+    marginBottom: 20,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -158,5 +167,11 @@ const styles = StyleSheet.create({
   buttonSave: {
     backgroundColor: "#0093fd",
     borderColor: "#0093fd",
+  },
+  icon: {
+    marginLeft: 10,
+    marginTop: StatusBar.currentHeight + 4,
+    width: 28,
+    height: 28,
   },
 });
